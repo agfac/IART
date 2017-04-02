@@ -1,6 +1,6 @@
 import java.util.Vector;
 
-public abstract class Node {
+public class Node {
 	private static int intid = 0;
 	private int graphid;
 	private int valor;
@@ -10,8 +10,8 @@ public abstract class Node {
 	private String id;
 	private Vector<Edge> arestas;
 	private boolean isGarbage;
-
-	public Node(String id) {
+	
+	public Node(String id){
 		this.id = id;
 		Vector<Edge> emptyedge = null;
 		this.arestas = emptyedge;
@@ -25,7 +25,7 @@ public abstract class Node {
 		this.graphid = intid;
 		intid++;
 	}
-
+	
 	public Node(String id, int valor) {
 		this.id = id;
 		Vector<Edge> emptyedge = null;
@@ -40,8 +40,8 @@ public abstract class Node {
 		this.graphid = intid;
 		intid++;
 	}
-
-	public Node(String id, Vector<Edge> arestas) {
+	
+	public Node(String id, Vector<Edge> arestas){
 		this.id = id;
 		this.arestas = arestas;
 		this.valor = -1;
@@ -54,8 +54,8 @@ public abstract class Node {
 		this.graphid = intid;
 		intid++;
 	}
-
-	public Node(String id, int valor, Vector<Edge> arestas) {
+	
+	public Node(String id, int valor, Vector<Edge> arestas){
 		this.id = id;
 		this.arestas = arestas;
 		this.valor = valor;
@@ -68,64 +68,63 @@ public abstract class Node {
 		this.graphid = intid;
 		intid++;
 	}
-
-	public Vector<Edge> getArestas() {
+	public Vector<Edge> getArestas(){
 		return arestas;
 	}
-
-	public void setArestas(Vector<Edge> arestas) {
+	
+	public void setArestas(Vector<Edge> arestas){
 		this.arestas = arestas;
 	}
-
-	public String getId() {
+	public String getId(){
 		return id;
 	}
-
-	public void setId(String id) {
+	
+	public void setId(String id){
 		this.id = id;
 	}
-
-	public boolean isIsGarbage() {
+	
+	public boolean isIsGarbage(){
 		return isGarbage;
 	}
-
-	public void setIsGarbage(boolean isGarbage) {
+	
+	public void setIsGarbage(boolean isGarbage){
 		this.isGarbage = isGarbage;
 	}
-
-	public int getValor() {
+	
+	public int getValor(){
 		return valor;
 	}
-
-	public void setValor(int valor) {
+	
+	public void setValor(int valor){
 		this.valor = valor;
 	}
-
-	public int getTempdist() {
+	
+	public int getTempdist(){
 		return tempdist;
 	}
-
-	public void setTempdist(int tempdist) {
+	
+	public void setTempdist(int tempdist){
 		this.tempdist = tempdist;
 	}
-
-	public Vector<String> getTemproute() {
+	
+	
+	public Vector<String> getTemproute(){
 		return temproute;
 	}
-
-	public void setTemproute(Vector<String> temproute) {
+	
+	public void setTemproute(Vector<String> temproute){
 		this.temproute = temproute;
 	}
-
-	public boolean isTempvisited() {
+	
+	public boolean isTempvisited(){
 		return tempvisited;
 	}
-
-	public void setTempvisited(boolean tempvisited) {
+	
+	public void setTempvisited(boolean tempvisited){
 		this.tempvisited = tempvisited;
 	}
-
-	public void addEdge(Edge e) {
+	
+	public void addEdge(Edge e){
 		this.arestas.add(e);
 	}
 

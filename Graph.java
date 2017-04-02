@@ -1,0 +1,322 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Vector;
+
+public class Graph {
+
+	HashMap<String,Node> nodes;
+	Node root;
+	Node destino;
+	int MIN_VALUE_GARBAGE = 10;
+	int MAX_TRUCK_VALUE =60;
+	
+	public Graph() {
+
+	}
+
+	public Node getDestino(){
+		return destino;
+	}
+
+	void setDestino(Node destino1) {
+		destino = destino1;
+	}
+
+	public  HashMap<String,Node> getNodes() {
+		return nodes;
+	}
+
+	public void setNodes(HashMap<String,Node> nodes1) {
+		nodes = nodes1;
+	}
+
+	public Node getRoot(){
+		return root;
+	}
+
+	public void setRoot(Node root1) {
+		root = root1;
+	}
+
+
+	public void addNode(Node node) {
+		nodes.put(node.getId(), node);
+	}
+
+	public void resetMap() {
+		Iterator<Entry<String, Node>> it = nodes.entrySet().iterator();
+		while(it.hasNext()) {
+			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			((Node) pair.getValue()).setTempdist(99999);
+			((Node) pair.getValue()).setTempvisited(false);
+			it.remove();
+		}
+	}
+
+	public void getDistfromNode(String Node1, String Node2, int dist, Vector<String> route) {
+		resetMap();
+		PriorityQueue<Node> pq = new PriorityQueue<Node>();
+		Vector<String> emptyvec = new Vector<String>();
+		nodes.get(Node1).setTempdist(0);
+		nodes.get(Node1).setTemproute(emptyvec);
+		nodes.get(Node1).setTempvisited(true);
+		pq.add(nodes.get(Node1));
+		while(!pq.isEmpty()) {
+			Node temp = pq.poll();
+			Vector<Edge> tempEdges = temp.getArestas();
+			for(int i = 0; i < tempEdges.size(); i++) {
+				int tempdist = 0;
+				tempdist = temp.getTempdist() + tempEdges.get(i).getDistancia();
+				if(tempdist < tempEdges.get(i).getDestino().getTempdist()) {
+					tempEdges.get(i).getDestino().setTempdist(tempdist);
+					Vector<String> tempnodes = temp.getTemproute();
+					tempnodes.add(temp.getId());
+					tempEdges.get(i).getDestino().setTemproute(tempnodes);
+				}
+				if(!(tempEdges.get(i).getDestino().isTempvisited())){
+					tempEdges.get(i).getDestino().setTempvisited(true);
+					pq.add(tempEdges.get(i).getDestino());
+				}
+			}
+		}
+		dist = nodes.get(Node2).getTempdist();
+		route = nodes.get(Node2).getTemproute();
+	}
+
+	public void getMinRoute(Vector<String> garbage,Vector<String> currentRoute, int currentDist, Vector<String> bestRoute, int bestDist) {
+		for(int i = 0; i < garbage.size(); i++) {
+			Vector<String> temproute = currentRoute;
+			Vector<String> partialroute = new Vector<String>();
+			int dist = 0;
+			int tempdist = currentDist;
+
+
+			if(currentRoute.isEmpty()) {
+				getDistfromNode(root.getId(),garbage.get(i),dist,partialroute);
+				tempdist += dist;
+				for(int j = 0; j < partialroute.size(); j++) {
+					temproute.add(partialroute.get(j));
+				}
+				temproute.add(garbage.get(i));
+			}
+			else {
+				getDistfromNode(temproute.lastElement(),garbage.get(i),dist,partialroute);
+				tempdist += dist;
+				temproute.remove(temproute.lastElement());
+				for(int j = 0; j < partialroute.size(); j++) {
+					temproute.add(partialroute.get(j));
+				}
+				temproute.add(garbage.get(i));
+			}
+			if(tempdist >= bestDist) {
+				continue;
+			}
+
+			else {
+				Vector<String> tempgarbage = garbage;
+				tempgarbage.remove(i);
+				getMinRoute(tempgarbage,temproute,tempdist,bestRoute,bestDist);
+			}
+
+		}
+		if(garbage.isEmpty()) {
+			Vector<String> partialroute = new Vector<String>();
+			int dist = 0;
+			getDistfromNode(currentRoute.lastElement(),destino.getId(),dist,partialroute);
+			currentDist += dist;
+			currentRoute.remove(0);
+			for(int j = 0; j < partialroute.size(); j++) {
+				currentRoute.add(partialroute.get(j));
+			}
+			currentRoute.add(destino.getId());
+
+			if(currentDist < bestDist) {
+				bestRoute = currentRoute;
+				bestDist = currentDist;
+			}
+		}
+
+	}
+
+	public Vector<String> getGarbageNodes() {
+		Iterator<Entry<String, Node>> it = nodes.entrySet().iterator();
+		Vector<String> finale = new Vector<String>();
+		while(it.hasNext()) {
+			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			if(((Node) pair.getValue()).isIsGarbage())
+				if(((Node) pair.getValue()).getValor() > MIN_VALUE_GARBAGE)
+					finale.add((String) pair.getKey());
+			it.remove();
+		}
+		return finale;
+	}
+
+	public void generateRoutes(Vector<String> gn, Vector<String> best, int bestvalue) {
+		int value = 0;
+		for(int i = 0; i < gn.size(); i++) {
+			value += nodes.get(gn.get(i)).getValor();
+		}
+		if(value > MAX_TRUCK_VALUE) {
+			for(int i = 0; i < gn.size(); i++) {
+				Vector<String> temp = gn;
+				temp.removeElementAt(i);
+				generateRoutes(temp,best,bestvalue);
+			}
+		}
+		else if(value > bestvalue) {
+			best = gn;
+			bestvalue = value;
+		}
+
+
+	}
+
+
+
+	public void loadNodes(String filename){
+		
+		String idNode;
+		int valorNode;
+		Node node;
+		
+		String line;
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new FileReader(filename));
+			line = br.readLine();
+			while (line != null){
+				valorNode = 0;
+				String[] dividedStr = line.split(" ");
+				if (!dividedStr[0].equals("No")){
+					System.out.println("Erro 1");
+					br.close();
+					return;
+				}
+				if (!dividedStr[1].equals("No")){
+					System.out.println("Erro 2");
+					br.close();
+					return;
+				}
+				idNode=dividedStr[2];
+				
+				if (!dividedStr[3].equals('-')){
+					System.out.println("Erro 3");
+					br.close();
+					return;
+				}
+				
+				valorNode=Integer.parseInt(dividedStr[4]);
+				
+				if (valorNode==0){
+					node = new Node(idNode);
+					addNode(node);
+				}else{
+					node = new Node(idNode, valorNode);
+					addNode(node);
+				}
+				if(node.getId().equals("Central")) {
+					setRoot(node);
+				}
+				else if(node.getId().equals("Estacao")) {
+					setDestino(node);
+				}
+				line = br.readLine();
+			}
+			br.close();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+
+	public void loadEdges(String filename){
+
+		BufferedReader br;
+		String idNodeOrigem,idNodeDestino;
+		int distancia;
+		
+	    String line;
+		try {
+			br = new BufferedReader(new FileReader(filename));
+			line = br.readLine();
+			while (line != null){
+
+				String[] dividedStr = line.split(" ");
+
+				if (!dividedStr[0].equals("Aresta")){
+					System.out.println("Erro 1");
+					br.close();
+					return;
+				}
+
+				if (!dividedStr[1].equals("-")){
+					System.out.println("Erro 2");
+					br.close();
+					return;
+				}
+
+
+				idNodeOrigem=dividedStr[2];
+
+				if (!dividedStr[3].equals('-')){
+					System.out.println("Erro 3");
+					br.close();
+					return;
+				}
+
+				idNodeDestino=dividedStr[4];
+
+				
+				if (!dividedStr[5].equals('-')){
+					System.out.println("Erro 4");
+					br.close();
+					return;
+				}
+
+				distancia=Integer.parseInt(dividedStr[6]);
+				Edge e = new Edge(nodes.get(idNodeDestino), distancia);
+				nodes.get(idNodeOrigem).addEdge(e);
+				line = br.readLine();
+			}
+			br.close();
+		} catch (IOException e1) {
+			System.out.println("Ficheiro nao existe");
+			return;
+		}
+		
+		
+
+	}
+
+
+	
+
+	Edge findAresta(Node src, String dest) {
+		for(int i = 0 ; i < src.getArestas().size();i++) {
+			Edge e = src.getArestas().get(i);
+			Node n = e.getDestino();
+			if(n.getId() == dest){
+				return e;
+			}
+		}
+		return null;
+	}
+
+
+	
+
+
+
+}
