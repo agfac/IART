@@ -11,14 +11,15 @@ import java.util.Vector;
 
 public class Graph {
 
-	HashMap<String,Node> nodes;
+	HashMap<String,Node> nodes = new HashMap<String,Node>();
 	Node root;
 	Node destino;
 	int MIN_VALUE_GARBAGE = 10;
 	int MAX_TRUCK_VALUE =60;
+	Truck currentTruck;
 	
 	public Graph() {
-
+		currentTruck = new Truck();
 	}
 
 	public Node getDestino(){
@@ -142,7 +143,6 @@ public class Graph {
 				bestDist = currentDist;
 			}
 		}
-
 	}
 
 	public Vector<String> getGarbageNodes() {
@@ -174,18 +174,15 @@ public class Graph {
 			best = gn;
 			bestvalue = value;
 		}
-
-
 	}
 
-
-
 	public void loadNodes(String filename){
-		
+
 		String idNode;
-		int valorNode;
+		int valorNode, valorDistanciaEstacao;
 		Node node;
-		
+		Boolean isNumericNode = false;
+
 		String line;
 		BufferedReader br;
 		try {
@@ -193,32 +190,52 @@ public class Graph {
 			line = br.readLine();
 			while (line != null){
 				valorNode = 0;
+				valorDistanciaEstacao = 0;
+				isNumericNode = false;
+
 				String[] dividedStr = line.split(" ");
 				if (!dividedStr[0].equals("No")){
 					System.out.println("Erro 1");
 					br.close();
 					return;
 				}
-				if (!dividedStr[1].equals("No")){
+				if (!dividedStr[1].equals("-")){
 					System.out.println("Erro 2");
 					br.close();
 					return;
 				}
 				idNode=dividedStr[2];
-				
-				if (!dividedStr[3].equals('-')){
+
+				if (dividedStr.length>3 && !dividedStr[3].equals("-")){
 					System.out.println("Erro 3");
 					br.close();
 					return;
 				}
-				
-				valorNode=Integer.parseInt(dividedStr[4]);
-				
+
+				if(dividedStr.length>3)
+					valorNode=Integer.parseInt(dividedStr[4]);
+
+				if (dividedStr.length>3 && !dividedStr[5].equals("-")){
+					System.out.println("Erro 4");
+					br.close();
+					return;
+				}
+
+				if(dividedStr.length>3){
+					valorDistanciaEstacao=Integer.parseInt(dividedStr[6]);
+					isNumericNode = true;
+				}
+
+
 				if (valorNode==0){
 					node = new Node(idNode);
+					if(isNumericNode)
+						node.setDistanciaEstacao(valorDistanciaEstacao);
 					addNode(node);
 				}else{
 					node = new Node(idNode, valorNode);
+					if(isNumericNode)
+						node.setDistanciaEstacao(valorDistanciaEstacao);
 					addNode(node);
 				}
 				if(node.getId().equals("Central")) {
@@ -239,15 +256,13 @@ public class Graph {
 		}
 	}
 
-
-
 	public void loadEdges(String filename){
 
 		BufferedReader br;
 		String idNodeOrigem,idNodeDestino;
 		int distancia;
-		
-	    String line;
+
+		String line;
 		try {
 			br = new BufferedReader(new FileReader(filename));
 			line = br.readLine();
@@ -270,7 +285,7 @@ public class Graph {
 
 				idNodeOrigem=dividedStr[2];
 
-				if (!dividedStr[3].equals('-')){
+				if (!dividedStr[3].equals("-")){
 					System.out.println("Erro 3");
 					br.close();
 					return;
@@ -278,8 +293,8 @@ public class Graph {
 
 				idNodeDestino=dividedStr[4];
 
-				
-				if (!dividedStr[5].equals('-')){
+
+				if (!dividedStr[5].equals("-")){
 					System.out.println("Erro 4");
 					br.close();
 					return;
@@ -295,13 +310,7 @@ public class Graph {
 			System.out.println("Ficheiro nao existe");
 			return;
 		}
-		
-		
-
 	}
-
-
-	
 
 	Edge findAresta(Node src, String dest) {
 		for(int i = 0 ; i < src.getArestas().size();i++) {
@@ -315,8 +324,26 @@ public class Graph {
 	}
 
 
+	Node getNextNode(Vector<Node> nodes){
+		Node nextNode = null;
+		int gValue = currentTruck.getGvalue();
+		int gPlusH = Integer.MAX_VALUE;
+		
+		for(int i = 0; i<nodes.size();i++){
+			Node no = nodes.get(i);
+			int distanciaEstacaoNo = no.getDistanciaEstacao();
+			
+			if( gValue + distanciaEstacaoNo < gPlusH ){
+				gPlusH = gValue + distanciaEstacaoNo;
+				nextNode = no;
+			}
+		}
+		currentTruck.updateDistancia_percorrida(nextNode.getValueEdge(nextNode.get));
+		return nextNode;
+	}
 	
-
-
-
+	//TODO APAGAR Truck, 
+	public void setFValues(){
+		
+	}
 }

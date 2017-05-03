@@ -1,17 +1,23 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 public class RecolhadeResiduos {
 	static BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 	public static String newline = System.getProperty("line.separator");
-
-	public static void main(String[] args) {
+	private static Graph g = new Graph();
+	private final static int GARBAGE_LIMIT = 15;
+	
+	public static void main(String[] args) throws NumberFormatException, InterruptedException, IOException {
 		menuload();
 	}
 
-	Vector<String> removeNodesVec(Vector<String> src, Vector<String> tg) {
-		
+	static Vector<String> removeNodesVec(Vector<String> src, Vector<String> tg) {
+
 		for(int i = 0; i < src.size(); i++) {
 			for(int j = 0; j < tg.size(); j++){
 				if( src.get(i).equals(tg.get(j))) {
@@ -25,7 +31,7 @@ public class RecolhadeResiduos {
 
 	}
 
-	void printroute(Vector<String> route) {
+	static void printroute(Vector<String> route) {
 		for(int i = 0; i < route.size(); i++) {
 			System.out.print(route.get(i));
 			if(i < route.size()-1) {
@@ -34,15 +40,34 @@ public class RecolhadeResiduos {
 		}
 		System.out.println(newline);
 	}
+	
+	static Vector<Node> getGargabeWaste(){
+		HashMap<String,Node> a = g.getNodes();
+		Vector<Node> nodes = new Vector<Node>();
+		
+		Iterator it = a.entrySet().iterator();
 
-	void menu1(Graph g, GraphViewer gv) {
-//		system("CLS");
+		while(it.hasNext()){
+			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			Node n = pair.getValue();
+			
+			if(n.getValor() >= GARBAGE_LIMIT){
+				nodes.add(n);
+			}
+		}
+		return nodes;
+	}
+	
+	
+	
+	static void menu1(Graph g) throws NumberFormatException, InterruptedException, IOException {
+		//		system("CLS");
 		Vector<String> gnodes;
 		Vector<String> gnodesf;
-		gnodes = g->getGarbageNodes();
+		gnodes = g.getGarbageNodes();
 		gnodesf = gnodes;
 
-		vector<vector <string> > temproutes;
+		Vector<Vector <String> > temproutes = null;
 
 		System.out.println("Garbage nodes exceeding capacity!");
 		printroute(gnodes);
@@ -55,35 +80,35 @@ public class RecolhadeResiduos {
 		int i;
 		i = Integer.parseInt(inFromUser.readLine());
 
-		Vector<string> empty;
-		Vector<string> finalVector;
-		int distf = INT_MAX;
+		Vector<String> empty = null;
+		Vector<String> finalVector = null;
+		int distf = Integer.MAX_VALUE;
 		int zero = 0;
 		int distt = 0;
 
 
 		switch(i) {
 		case 1:
-			g->getMinRoute(gnodes,empty,zero,finalVector,distf);
-			temproutes.push_back(finalVector);
+			g.getMinRoute(gnodes,empty,zero,finalVector,distf);
+			temproutes.add(finalVector);
 			System.out.println(newline);
 			printroute(finalVector);
 			System.out.println("Distancia total: " + distf + "m");
 			Thread.sleep(4000);
 			break;
 		case 2:
-			while(!gnodes.empty()) {
-				vector<string> temp;
+			while(!gnodes.isEmpty()) {
+				Vector<String> temp = null;
 				finalVector.clear();
 
-				distf = INT_MAX;
-				g->generateRoutes(gnodes,temp,zero);
+				distf = Integer.MAX_VALUE;
+				g.generateRoutes(gnodes,temp,zero);
 
 				zero = 0;
 
-				g->getMinRoute(temp,empty,zero,finalVector,distf);
+				g.getMinRoute(temp,empty,zero,finalVector,distf);
 				System.out.println(newline);
-				temproutes.push_back(finalVector);
+				temproutes.add(finalVector);
 				printroute(finalVector);
 				System.out.println("Distancia parcial: " + distf + "m");
 				distt += distf;
@@ -94,19 +119,15 @@ public class RecolhadeResiduos {
 			break;
 		}
 
-		g->edit(gv,gnodesf,temproutes);
-//		system("PAUSE");
-		free(g);
-		free(gv);
+		//g.edit(gv,gnodesf,temproutes);
+		//		system("PAUSE");
 		menuload();
 	}
 
-	static void menuload() {
-
-		Graph g = new Graph();
+	static void menuload() throws InterruptedException, NumberFormatException, IOException {
 
 		int i;
-//		system("CLS");
+		//		system("CLS");
 		System.out.println("Choose File.");
 		System.out.println("1 - nodes.txt/edges.txt");
 		System.out.println("2 - nodes2.txt/edges2.txt");
@@ -114,7 +135,7 @@ public class RecolhadeResiduos {
 		System.out.println("4 - nodes4.txt/edges4.txt");
 		System.out.println("9 to exit!");
 		i = Integer.parseInt(inFromUser.readLine());
-		
+
 		switch(i) {
 		case 9:
 			System.out.println("Exiting");
@@ -122,20 +143,20 @@ public class RecolhadeResiduos {
 			System.exit(0);
 			break;
 		case 1:
-			g->loadNodes("nodes.txt");
-			g->loadEdges("edges.txt");
+			g.loadNodes("nodes.txt");
+			g.loadEdges("edges.txt");
 			break;
 		case 2:
-			g->loadNodes("nodes2.txt");
-			g->loadEdges("edges2.txt");
+			g.loadNodes("nodes2.txt");
+			g.loadEdges("edges2.txt");
 			break;
 		case 3:
-			g->loadNodes("nodes3.txt");
-			g->loadEdges("edges3.txt");
+			g.loadNodes("nodes3.txt");
+			g.loadEdges("edges3.txt");
 			break;
 		case 4:
-			g->loadNodes("nodes4.txt");
-			g->loadEdges("edges4.txt");
+			g.loadNodes("nodes4.txt");
+			g.loadEdges("edges4.txt");
 			break;
 		default:
 			System.out.println("Unknown Input!");
@@ -143,9 +164,12 @@ public class RecolhadeResiduos {
 			menuload();
 			break;
 		}
-		GraphViewer gv = new GraphViewer(800, 800, true);
-		g->display(gv);
-		menu1(g,gv);
+
+
+
+		//GraphViewer gv = new GraphViewer(800, 800, true);
+		//g.display(gv);
+		//menu1(g);
 	}
 
 }
