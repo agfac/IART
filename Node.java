@@ -13,11 +13,14 @@ public class Node {
 	private boolean isGarbage;
 	private Node parent;
 	private int fValue;
+	private int gValue;
+	private int distance=0;
+	private int availableCapacity=50;
 	
 	public Node(String id){
 		this.id = id;
 		this.arestas = new Vector<Edge>();
-		this.valor = -1;
+		this.valor = 0;
 		this.isGarbage = false;
 		this.tempdist = Integer.MAX_VALUE;
 		this.temproute = new Vector<String>();
@@ -43,7 +46,7 @@ public class Node {
 	public Node(String id, Vector<Edge> arestas){
 		this.id = id;
 		this.arestas = arestas;
-		this.valor = -1;
+		this.valor = 0;
 		this.isGarbage = false;
 		this.tempdist = Integer.MAX_VALUE;
 		this.temproute = new Vector<String>();
@@ -165,6 +168,32 @@ public class Node {
 		this.fValue = fValue;
 	}
 	
+	public int getgValue() {
+		return gValue;
+	}
+	
+	public int distanceToParent(Node parent){
+		return parent.getValueEdge(this.id);
+	}
+	
+	public int getAvailableCapacity(){
+		return this.availableCapacity;
+	}
+	
+	public void setAvailableCapacity(int availableCapacity){
+		this.availableCapacity=availableCapacity;
+	}
+	
+	public void updateGValue(){
+		
+		this.distance=distanceToParent(this.parent)+parent.distance;
+		this.gValue = distance + availableCapacity/50*distance;
+	}
+	
+	public void updateFValue(){
+		this.fValue=this.gValue+this.distanciaEstacao;
+	}
+	
 	public int getValueEdge(String nome){
 		
 		for(int i = 0; i< arestas.size(); i++){
@@ -174,6 +203,14 @@ public class Node {
 		}
 		
 		return -1;
+	}
+	
+	public int calculateTempGValue(Node parent){
+		int gValue;
+		int distance= distanceToParent(parent) + parent.distance;
+		gValue=distance + (parent.availableCapacity-this.valor)/50*distance;
+		
+		return gValue;
 	}
 
 }

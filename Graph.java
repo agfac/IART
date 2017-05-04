@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,10 +17,11 @@ public class Graph {
 	Node destino;
 	int MIN_VALUE_GARBAGE = 10;
 	int MAX_TRUCK_VALUE =60;
-	Truck currentTruck;
+	Comparator<Node> comparator = new NodeComparator();
+    PriorityQueue<Node> openQueue = new PriorityQueue<Node>(comparator);
+    //Vector<Node> closedNodes = new Vector<Node>();
 	
 	public Graph() {
-		currentTruck = new Truck();
 	}
 
 	public Node getDestino(){
@@ -322,11 +324,47 @@ public class Graph {
 		}
 		return null;
 	}
+	
+	public void aStar(){
+		openQueue.add(nodes.get("Central"));
+		Boolean stop=true;
+		while(!openQueue.isEmpty() && stop){
+			Node node = openQueue.poll();
+			
+			Vector<Node> nodeSons = node.getConnectedNodes();
+			
+			for(int i=0;i<nodeSons.size();i++){
+				if(!openQueue.contains(nodeSons.get(i)) || nodeSons.get(i).calculateTempGValue(node)<nodeSons.get(i).getgValue()){
+					nodeSons.get(i).setAvailableCapacity(node.getAvailableCapacity()-nodeSons.get(i).getValor());
+					nodeSons.get(i).setParent(node);
+					nodeSons.get(i).updateGValue();
+					nodeSons.get(i).updateFValue();
+					openQueue.add(nodeSons.get(i));
+					System.out.println("no : "+nodeSons.get(i).getId()+ " f " + nodeSons.get(i).getfValue());
+				}
+				if(nodeSons.get(i).getId().equals("Estacao"))
+					stop=false;
+			}
+		}
+	}
 
+	public void printResults(){
+		Node node = nodes.get("Estacao");
+		while(true){
+			
+			if(node.getParent()!=null){
+				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId());
+			}
+			else break;
+			node = node.getParent();
+		}
+	}
+	
+	
 
-	Node getNextNode(Vector<Node> nodes){
+	/*Node getNextNode(Vector<Node> nodes){
 		Node nextNode = null;
-		int gValue = currentTruck.getGvalue();
+		//int gValue = currentTruck.getGvalue();
 		int gPlusH = Integer.MAX_VALUE;
 		
 		for(int i = 0; i<nodes.size();i++){
@@ -340,7 +378,7 @@ public class Graph {
 		}
 		currentTruck.updateDistancia_percorrida(nextNode.getValueEdge(nextNode.get));
 		return nextNode;
-	}
+	}*/
 	
 	//TODO APAGAR Truck, 
 	public void setFValues(){

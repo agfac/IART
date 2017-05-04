@@ -166,7 +166,8 @@ public class RecolhadeResiduos {
 		}
 
 
-
+		 g.aStar();
+		 g.printResults();
 		//GraphViewer gv = new GraphViewer(800, 800, true);
 		//g.display(gv);
 		//menu1(g);
