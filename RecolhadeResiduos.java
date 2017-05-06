@@ -59,7 +59,7 @@ public class RecolhadeResiduos {
 	}
 	
 	
-	
+	/*
 	static void menu1(Graph g) throws NumberFormatException, InterruptedException, IOException {
 		//		system("CLS");
 		Vector<String> gnodes;
@@ -123,7 +123,8 @@ public class RecolhadeResiduos {
 		//		system("PAUSE");
 		menuload();
 	}
-
+*/
+	
 	static void menuload() throws InterruptedException, NumberFormatException, IOException {
 
 		int i;
@@ -165,12 +166,50 @@ public class RecolhadeResiduos {
 			break;
 		}
 
-
-		 g.aStar();
-		 g.printResults();
+		getShitDone();
+		g.printResults();
 		//GraphViewer gv = new GraphViewer(800, 800, true);
 		//g.display(gv);
 		//menu1(g);
+	}
+	
+	private static void getShitDone() throws InterruptedException{
+		Vector <String> garbageNodes = g.getGarbageNodes(); 
+		while(garbageNodes.size()!=0){
+			System.out.println("tamanho do lixo "+ garbageNodes.size());
+			g.aStar(garbageNodes);
+			getVoyage();
+			resetGraphForVoyage();
+			garbageNodes = g.getGarbageNodes();
+			Thread.sleep(10000);
+		}
+	}
+	
+	private static void resetGraphForVoyage(){
+		g.resetGraphForVoyage();
+	}
+	
+	private static void getVoyage(){
+		Node son = g.getNodes().get("Estacao");
+		Vector<Node> nodes = new Vector<Node>();
+		nodes.add(son);
+		while(son.getParent()!=null){
+			son=son.getParent();
+			nodes.add(son);
+		}
+		int capacity=50;
+		
+		for(int i=nodes.size()-1;i>=0;i--){
+			if(capacity>0){
+				if(capacity>nodes.get(i).getValor()){
+					capacity-=nodes.get(i).getValor();
+					nodes.get(i).setValor(0);
+				}else{
+					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
+					capacity=0;
+				}
+			}
+		}
 	}
 
 }

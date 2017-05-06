@@ -23,7 +23,20 @@ public class Graph {
 	
 	public Graph() {
 	}
-
+	
+	public void resetGraphForVoyage(){
+		HashMap<String,Node> copy = new HashMap<String,Node>(nodes);
+		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
+		while(it.hasNext()) {
+			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			((Node) pair.getValue()).setParent(null);
+			((Node) pair.getValue()).setAvailableCapacity(50);
+			((Node) pair.getValue()).setGValue(Integer.MAX_VALUE);
+			((Node) pair.getValue()).setFValue(Integer.MAX_VALUE);
+			it.remove();
+		}
+	}
+	
 	public Node getDestino(){
 		return destino;
 	}
@@ -148,19 +161,21 @@ public class Graph {
 	}
 
 	public Vector<String> getGarbageNodes() {
-		Iterator<Entry<String, Node>> it = nodes.entrySet().iterator();
+		HashMap<String,Node> copy = new HashMap<String,Node>(nodes);
+		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
 		Vector<String> finale = new Vector<String>();
 		while(it.hasNext()) {
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
 			if(((Node) pair.getValue()).isIsGarbage())
-				if(((Node) pair.getValue()).getValor() > MIN_VALUE_GARBAGE)
+				if(((Node) pair.getValue()).getValor() > MIN_VALUE_GARBAGE){
 					finale.add((String) pair.getKey());
+				}
 			it.remove();
 		}
 		return finale;
 	}
 
-	public void generateRoutes(Vector<String> gn, Vector<String> best, int bestvalue) {
+	/*public void generateRoutes(Vector<String> gn, Vector<String> best, int bestvalue) {
 		int value = 0;
 		for(int i = 0; i < gn.size(); i++) {
 			value += nodes.get(gn.get(i)).getValor();
@@ -176,7 +191,7 @@ public class Graph {
 			best = gn;
 			bestvalue = value;
 		}
-	}
+	}*/
 
 	public void loadNodes(String filename){
 
@@ -325,35 +340,71 @@ public class Graph {
 		return null;
 	}
 	
-	public void aStar(){
+	public void aStar(Vector <String> garbageNodes){
+	    openQueue = new PriorityQueue<Node>(comparator);
 		openQueue.add(nodes.get("Central"));
+		
 		Boolean stop=true;
 		while(!openQueue.isEmpty() && stop){
+			
 			Node node = openQueue.poll();
-			
-			Vector<Node> nodeSons = node.getConnectedNodes();
-			
-			for(int i=0;i<nodeSons.size();i++){
-				if(!openQueue.contains(nodeSons.get(i)) || nodeSons.get(i).calculateTempGValue(node)<nodeSons.get(i).getgValue()){
-					nodeSons.get(i).setAvailableCapacity(node.getAvailableCapacity()-nodeSons.get(i).getValor());
-					nodeSons.get(i).setParent(node);
-					nodeSons.get(i).updateGValue();
-					nodeSons.get(i).updateFValue();
-					openQueue.add(nodeSons.get(i));
-					System.out.println("no : "+nodeSons.get(i).getId()+ " f " + nodeSons.get(i).getfValue());
-				}
+			Vector<Node> nodeSons = node.getConnectedNodes();		
+			for(int i=0;i<nodeSons.size();i++){		
+				Node son = nodeSons.get(i);
+				Vector<Node> astar = astarRecursive(son,garbageNodes,node);
+				for(int j=0;j<astar.size();j++){
+					if(!openQueue.contains(astar.get(j)) ){
+						System.out.println("vou adicionar o no " + astar.get(j).getId());
+						openQueue.add(astar.get(j));
+					}
+				}	
 				if(nodeSons.get(i).getId().equals("Estacao"))
 					stop=false;
 			}
 		}
 	}
+	
+	public Vector<Node> astarRecursive(Node son, Vector<String> garbageNodes, Node parent){
+		Vector <Node> roBeReturned = new Vector<Node>();
+		if(!son.getId().equals("Estacao")){
+			if(garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0){
+				if(parent.getAvailableCapacity()>=son.getValor())
+					son.setAvailableCapacity(parent.getAvailableCapacity()-son.getValor());
+				else son.setAvailableCapacity(son.getValor()-parent.getAvailableCapacity());
+				son.setParent(parent);
+				son.updateGValue();			
+				son.updateFValue();
+				roBeReturned.add(son);
+			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue()){
+				son.setAvailableCapacity(parent.getAvailableCapacity());
+				son.setParent(parent);
+				son.updateGValue();
+				son.updateFValue();
+				for(int i=0;i< son.getConnectedNodes().size();i++){
+					Vector <Node> temp = astarRecursive( son.getConnectedNodes().get(i),garbageNodes, son);
+					for(int j=0;j<temp.size();j++){
+						roBeReturned.addElement(temp.get(j));
+					}
+				}
+			}
+		}else{
+			if(son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()<50){
+				son.setParent(parent);
+				son.setAvailableCapacity(parent.getAvailableCapacity());
+				son.updateGValue();
+				son.updateFValue();
+			}
+			
+		}
+		return roBeReturned;		
+	}
 
 	public void printResults(){
+		
 		Node node = nodes.get("Estacao");
 		while(true){
-			
 			if(node.getParent()!=null){
-				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId());
+				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId() + " gvalue= " + node.getgValue());
 			}
 			else break;
 			node = node.getParent();
@@ -379,9 +430,4 @@ public class Graph {
 		currentTruck.updateDistancia_percorrida(nextNode.getValueEdge(nextNode.get));
 		return nextNode;
 	}*/
-	
-	//TODO APAGAR Truck, 
-	public void setFValues(){
-		
-	}
 }

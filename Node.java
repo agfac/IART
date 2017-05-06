@@ -12,8 +12,8 @@ public class Node {
 	private Vector<Edge> arestas;
 	private boolean isGarbage;
 	private Node parent;
-	private int fValue;
-	private int gValue;
+	private double fValue=Integer.MAX_VALUE;
+	private double gValue = Integer.MAX_VALUE;
 	private int distance=0;
 	private int availableCapacity=50;
 	
@@ -70,6 +70,10 @@ public class Node {
 	}
 	public Vector<Edge> getArestas(){
 		return arestas;
+	}
+	
+	public void setGValue(double gvalue){
+		this.gValue=gvalue;
 	}
 	
 	public void setArestas(Vector<Edge> arestas){
@@ -160,15 +164,15 @@ public class Node {
 		this.parent = parent;
 	}
 
-	public int getfValue() {
+	public double getfValue() {
 		return fValue;
 	}
 
-	public void setfValue(int fValue) {
+	public void setFValue(int fValue) {
 		this.fValue = fValue;
 	}
 	
-	public int getgValue() {
+	public double getgValue() {
 		return gValue;
 	}
 	
@@ -184,10 +188,9 @@ public class Node {
 		this.availableCapacity=availableCapacity;
 	}
 	
-	public void updateGValue(){
-		
+	public void updateGValue(){	
 		this.distance=distanceToParent(this.parent)+parent.distance;
-		this.gValue = distance + availableCapacity/50*distance;
+		this.gValue = 0.3*distance*distance + 0.7*availableCapacity/(double)50*distance*distance;
 	}
 	
 	public void updateFValue(){
@@ -205,11 +208,18 @@ public class Node {
 		return -1;
 	}
 	
-	public int calculateTempGValue(Node parent){
-		int gValue;
+	public double calculateTempGValueWithoutPassing(Node parent){
+		double gValue;
 		int distance= distanceToParent(parent) + parent.distance;
-		gValue=distance + (parent.availableCapacity-this.valor)/50*distance;
+		gValue=0.3*distance*distance + 0.7*parent.availableCapacity/(double)50*distance*distance;
 		
+		return gValue;
+	}
+	
+	public double calculateTempGValue(Node parent){
+		double gValue;
+		int distance= distanceToParent(parent) + parent.distance;
+		gValue= (0.3*distance*distance + 0.7*(parent.availableCapacity-this.valor)/(double)50*distance*distance);
 		return gValue;
 	}
 
