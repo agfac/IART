@@ -12,13 +12,13 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
+import Recolha.Utils;
+
 public class Graph {
 
 	HashMap<String,Node> nodes = new HashMap<String,Node>();
 	Node root;
 	Node destino;
-	int MIN_VALUE_GARBAGE = 10;
-	int MAX_TRUCK_VALUE =50;
 	Comparator<Node> comparator = new NodeComparator();
     PriorityQueue<Node> openQueue = new PriorityQueue<Node>(comparator);
 	
@@ -31,7 +31,7 @@ public class Graph {
 		while(it.hasNext()) {
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
 			((Node) pair.getValue()).setParent(null);
-			((Node) pair.getValue()).setAvailableCapacity(50);
+			((Node) pair.getValue()).setAvailableCapacity(Utils.MAX_TRUCK_VALUE);
 			((Node) pair.getValue()).setGValue(Integer.MAX_VALUE);
 			((Node) pair.getValue()).setFValue(Integer.MAX_VALUE);
 			it.remove();
@@ -168,31 +168,13 @@ public class Graph {
 		while(it.hasNext()) {
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
 			if(((Node) pair.getValue()).isIsGarbage())
-				if(((Node) pair.getValue()).getValor() > MIN_VALUE_GARBAGE){
+				if(((Node) pair.getValue()).getValor() >Utils.MIN_VALUE_GARBAGE){
 					finale.add((String) pair.getKey());
 				}
 			it.remove();
 		}
 		return finale;
 	}
-
-	/*public void generateRoutes(Vector<String> gn, Vector<String> best, int bestvalue) {
-		int value = 0;
-		for(int i = 0; i < gn.size(); i++) {
-			value += nodes.get(gn.get(i)).getValor();
-		}
-		if(value > MAX_TRUCK_VALUE) {
-			for(int i = 0; i < gn.size(); i++) {
-				Vector<String> temp = gn;
-				temp.removeElementAt(i);
-				generateRoutes(temp,best,bestvalue);
-			}
-		}
-		else if(value > bestvalue) {
-			best = gn;
-			bestvalue = value;
-		}
-	}*/
 
 	public void loadNodes(String filename){
 
@@ -369,10 +351,12 @@ public class Graph {
 	    openQueue = new PriorityQueue<Node>(comparator);
 		openQueue.add(nodes.get("Central"));
 		
-		Boolean stop=true;
+		System.out.println("tamanho do lixo " + garbageNodes.size());
+		boolean stop=true;
 		while(!openQueue.isEmpty() && stop){
 			
 			Node node = openQueue.poll();
+			System.out.println("lolololo " + node.getId());
 			Vector<Node> nodeSons = node.getConnectedNodes();		
 			for(int i=0;i<nodeSons.size();i++){		
 				Node son = nodeSons.get(i);
@@ -382,24 +366,37 @@ public class Graph {
 						openQueue.add(astar.get(j));
 					}
 				}	
-				if(nodeSons.get(i).getId().equals("Estacao"))
+				if(nodeSons.get(i).getId().equals("Estacao")){
 					stop=false;
+					System.out.println("encontre");
+				}
+					
 			}
 		}
 	}
 	
 	public Vector<Node> astarRecursive(Node son, Vector<String> garbageNodes, Node parent){
-		Vector <Node> roBeReturned = new Vector<Node>();
+		Vector <Node> toBeReturned = new Vector<Node>();
 		if(!son.getId().equals("Estacao")){
-			if(garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0){
+			if((garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0) || canBypass(son,garbageNodes)){
+				System.out.println("aiaiaiai");
 				if(parent.getAvailableCapacity()>=son.getValor())
 					son.setAvailableCapacity(parent.getAvailableCapacity()-son.getValor());
 				else son.setAvailableCapacity(son.getValor()-parent.getAvailableCapacity());
+				
+				if(son.getParent()!=null){
+					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
+				}
+				
 				son.setParent(parent);
 				son.updateGValue();			
 				son.updateFValue();
-				roBeReturned.add(son);
-			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue()){
+				toBeReturned.add(son);
+			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue() ){
+				System.out.println("aiaiaiai");
+				if(son.getParent()!=null){
+					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
+				}
 				son.setAvailableCapacity(parent.getAvailableCapacity());
 				son.setParent(parent);
 				son.updateGValue();
@@ -407,12 +404,12 @@ public class Graph {
 				for(int i=0;i< son.getConnectedNodes().size();i++){
 					Vector <Node> temp = astarRecursive( son.getConnectedNodes().get(i),garbageNodes, son);
 					for(int j=0;j<temp.size();j++){
-						roBeReturned.addElement(temp.get(j));
+						toBeReturned.addElement(temp.get(j));
 					}
 				}
 			}
 		}else{
-			if(son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()<50){
+			if(son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()<Utils.MAX_TRUCK_VALUE){
 				son.setParent(parent);
 				son.setAvailableCapacity(parent.getAvailableCapacity());
 				son.updateGValue();
@@ -420,7 +417,24 @@ public class Graph {
 			}
 			
 		}
-		return roBeReturned;		
+		return toBeReturned;		
+	}
+	
+	private boolean canBypass(Node son, Vector<String> garbageNodes){
+		Node test = son;
+		if(garbageNodes.size()==1 && test.getParent()!=null){
+			while(true){
+				if(test.getParent()==null)
+					break;
+				if(garbageNodes.contains(test.getParent())){
+					return false;
+				}
+				test=test.getParent();
+			}
+			return true;
+		}
+		
+		return false;
 	}
 
 	public void printResults(){
@@ -434,24 +448,4 @@ public class Graph {
 			node = node.getParent();
 		}
 	}
-	
-	
-
-	/*Node getNextNode(Vector<Node> nodes){
-		Node nextNode = null;
-		//int gValue = currentTruck.getGvalue();
-		int gPlusH = Integer.MAX_VALUE;
-		
-		for(int i = 0; i<nodes.size();i++){
-			Node no = nodes.get(i);
-			int distanciaEstacaoNo = no.getDistanciaEstacao();
-			
-			if( gValue + distanciaEstacaoNo < gPlusH ){
-				gPlusH = gValue + distanciaEstacaoNo;
-				nextNode = no;
-			}
-		}
-		currentTruck.updateDistancia_percorrida(nextNode.getValueEdge(nextNode.get));
-		return nextNode;
-	}*/
 }

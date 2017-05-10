@@ -2,6 +2,8 @@ package Graph;
 
 import java.util.Vector;
 
+import Recolha.Utils;
+
 public class Node {
 	private static int intid = 0;
 	private int graphid;
@@ -17,7 +19,7 @@ public class Node {
 	private double fValue=Integer.MAX_VALUE;
 	private double gValue = Integer.MAX_VALUE;
 	private int distance=0;
-	private int availableCapacity=50;
+	private int availableCapacity=Utils.MAX_TRUCK_VALUE;
 	private int posX = 0;
 	private int posY = 0;
 	
@@ -46,7 +48,9 @@ public class Node {
 		this.id = id;
 		this.arestas = new Vector<Edge>();
 		this.valor = valor;
-		this.isGarbage = true;
+		if(valor>Utils.MIN_VALUE_GARBAGE)
+			this.isGarbage = true;
+		else this.isGarbage = false;
 		this.tempdist = Integer.MAX_VALUE;
 		this.temproute = new Vector<String>();
 		this.tempvisited = false;
@@ -204,7 +208,7 @@ public class Node {
 	
 	public void updateGValue(){	
 		this.distance=distanceToParent(this.parent)+parent.distance;
-		this.gValue = 0.3*distance*distance + 0.7*availableCapacity/(double)50*distance*distance;
+		this.gValue = 0.3*distance*distance + 0.7*availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
 	}
 	
 	public void updateFValue(){
@@ -225,7 +229,7 @@ public class Node {
 	public double calculateTempGValueWithoutPassing(Node parent){
 		double gValue;
 		int distance= distanceToParent(parent) + parent.distance;
-		gValue=0.3*distance*distance + 0.7*parent.availableCapacity/(double)50*distance*distance;
+		gValue=0.3*distance*distance + 0.7*parent.availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
 		
 		return gValue;
 	}
@@ -233,7 +237,7 @@ public class Node {
 	public double calculateTempGValue(Node parent){
 		double gValue;
 		int distance= distanceToParent(parent) + parent.distance;
-		gValue= (0.3*distance*distance + 0.7*(parent.availableCapacity-this.valor)/(double)50*distance*distance);
+		gValue= (0.3*distance*distance + 0.7*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance*distance);
 		return gValue;
 	}
 

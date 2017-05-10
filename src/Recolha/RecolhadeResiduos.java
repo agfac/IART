@@ -3,10 +3,15 @@ package Recolha;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.AbstractQueue;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Vector;
 
 import Graph.Graph;
 import Graph.Node;
+import Graph.Edge;
 
 public class RecolhadeResiduos {
 	static BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
@@ -28,13 +33,6 @@ public class RecolhadeResiduos {
 	}
 	
 	static void menuload(int i) throws InterruptedException, NumberFormatException, IOException {
-
-		System.out.println("Choose File.");
-		System.out.println("1 - nodes.txt/edges.txt");
-		System.out.println("2 - nodes2.txt/edges2.txt");
-		System.out.println("3 - nodes3.txt/edges3.txt");
-		System.out.println("4 - nodes4.txt/edges4.txt");
-		System.out.println("9 to exit!");
 
 		switch(i) {
 		case 9:
@@ -61,35 +59,46 @@ public class RecolhadeResiduos {
 		default:
 			System.out.println("Unknown Input!");
 			Thread.sleep(1000);
-			//menuload();
 			break;
 		}
 
-		
-		System.out.println(g.getNodes().size());
 		//getShitDone();
 		//g.printResults();
-		//GraphViewer gv = new GraphViewer(800, 800, true);
-		//g.display(gv);
-		//menu1(g);
 	}
 	
-	public static void getShitDone() {
-		Vector <String> garbageNodes = g.getGarbageNodes(); 
+	public Queue<Edge> getShitDone() {
+		Vector <String> garbageNodes = g.getGarbageNodes();
+		Queue<Edge> path = new LinkedList<Edge>();
+		Vector<Node> semiPath = new Vector<Node>();
+
 		while(garbageNodes.size()!=0){
-			System.out.println("tamanho do lixo "+ garbageNodes.size());
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			g.aStar(garbageNodes);
-			getVoyage();
+			semiPath=getVoyage();
+			for(int i=semiPath.size()-1;i>0;i--){
+				for(int j=0;j<semiPath.get(i).getArestas().size();j++){
+					if(semiPath.get(i).getArestas().get(j).getDestino().getId().equals(semiPath.get(i-1).getId())){
+						path.add(semiPath.get(i).getArestas().get(j));
+						break;
+					}
+				}
+			}
 			resetGraphForVoyage();
 			garbageNodes = g.getGarbageNodes();
 		}
+		return path;
 	}
 	
 	private static void resetGraphForVoyage(){
 		g.resetGraphForVoyage();
 	}
 	
-	private static void getVoyage(){
+	private static Vector<Node> getVoyage(){
 		Node son = g.getNodes().get("Estacao");
 		Vector<Node> nodes = new Vector<Node>();
 		nodes.add(son);
@@ -99,21 +108,20 @@ public class RecolhadeResiduos {
 			son=son.getParent();
 			nodes.add(son);
 		}
-		int capacity=60;
+		int capacity=Utils.MAX_TRUCK_VALUE;
 		
 		for(int i=nodes.size()-1;i>=0;i--){
 			if(capacity>0){
 				if(capacity>nodes.get(i).getValor()){
-					System.out.println(" no " + nodes.get(i).getId() + " com valor " + 0 + " valor " + nodes.get(i).getValor());
 					capacity-=nodes.get(i).getValor();
 					nodes.get(i).setValor(0);
 				}else{
-					System.out.println(" no " + nodes.get(i).getId() + " com valor " + (nodes.get(i).getValor()-capacity));
 					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
 					capacity=0;
 				}
 			}
 		}
+		return nodes;
 	}
 
 }
