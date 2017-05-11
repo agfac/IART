@@ -61,31 +61,6 @@ public class Node {
 		intid++;
 	}
 	
-	public Node(String id, Vector<Edge> arestas){
-		this.id = id;
-		this.arestas = arestas;
-		this.valor = 0;
-		this.isGarbage = false;
-		this.tempdist = Integer.MAX_VALUE;
-		this.temproute = new Vector<String>();
-		this.tempvisited = false;
-
-		this.graphid = intid;
-		intid++;
-	}
-	
-	public Node(String id, int valor, Vector<Edge> arestas){
-		this.id = id;
-		this.arestas = arestas;
-		this.valor = valor;
-		this.isGarbage = true;
-		this.tempdist = Integer.MAX_VALUE;
-		this.temproute = new Vector<String>();
-		this.tempvisited = false;
-
-		this.graphid = intid;
-		intid++;
-	}
 	public Vector<Edge> getArestas(){
 		return arestas;
 	}

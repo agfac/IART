@@ -67,100 +67,6 @@ public class Graph {
 		nodes.put(node.getId(), node);
 	}
 
-	public void resetMap() {
-		Iterator<Entry<String, Node>> it = nodes.entrySet().iterator();
-		while(it.hasNext()) {
-			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
-			((Node) pair.getValue()).setTempdist(99999);
-			((Node) pair.getValue()).setTempvisited(false);
-			it.remove();
-		}
-	}
-
-	public void getDistfromNode(String Node1, String Node2, int dist, Vector<String> route) {
-		resetMap();
-		PriorityQueue<Node> pq = new PriorityQueue<Node>();
-		Vector<String> emptyvec = new Vector<String>();
-		nodes.get(Node1).setTempdist(0);
-		nodes.get(Node1).setTemproute(emptyvec);
-		nodes.get(Node1).setTempvisited(true);
-		pq.add(nodes.get(Node1));
-		while(!pq.isEmpty()) {
-			Node temp = pq.poll();
-			Vector<Edge> tempEdges = temp.getArestas();
-			for(int i = 0; i < tempEdges.size(); i++) {
-				int tempdist = 0;
-				tempdist = temp.getTempdist() + tempEdges.get(i).getDistancia();
-				if(tempdist < tempEdges.get(i).getDestino().getTempdist()) {
-					tempEdges.get(i).getDestino().setTempdist(tempdist);
-					Vector<String> tempnodes = temp.getTemproute();
-					tempnodes.add(temp.getId());
-					tempEdges.get(i).getDestino().setTemproute(tempnodes);
-				}
-				if(!(tempEdges.get(i).getDestino().isTempvisited())){
-					tempEdges.get(i).getDestino().setTempvisited(true);
-					pq.add(tempEdges.get(i).getDestino());
-				}
-			}
-		}
-		dist = nodes.get(Node2).getTempdist();
-		route = nodes.get(Node2).getTemproute();
-	}
-
-	public void getMinRoute(Vector<String> garbage,Vector<String> currentRoute, int currentDist, Vector<String> bestRoute, int bestDist) {
-		for(int i = 0; i < garbage.size(); i++) {
-			Vector<String> temproute = currentRoute;
-			Vector<String> partialroute = new Vector<String>();
-			int dist = 0;
-			int tempdist = currentDist;
-
-
-			if(currentRoute.isEmpty()) {
-				getDistfromNode(root.getId(),garbage.get(i),dist,partialroute);
-				tempdist += dist;
-				for(int j = 0; j < partialroute.size(); j++) {
-					temproute.add(partialroute.get(j));
-				}
-				temproute.add(garbage.get(i));
-			}
-			else {
-				getDistfromNode(temproute.lastElement(),garbage.get(i),dist,partialroute);
-				tempdist += dist;
-				temproute.remove(temproute.lastElement());
-				for(int j = 0; j < partialroute.size(); j++) {
-					temproute.add(partialroute.get(j));
-				}
-				temproute.add(garbage.get(i));
-			}
-			if(tempdist >= bestDist) {
-				continue;
-			}
-
-			else {
-				Vector<String> tempgarbage = garbage;
-				tempgarbage.remove(i);
-				getMinRoute(tempgarbage,temproute,tempdist,bestRoute,bestDist);
-			}
-
-		}
-		if(garbage.isEmpty()) {
-			Vector<String> partialroute = new Vector<String>();
-			int dist = 0;
-			getDistfromNode(currentRoute.lastElement(),destino.getId(),dist,partialroute);
-			currentDist += dist;
-			currentRoute.remove(0);
-			for(int j = 0; j < partialroute.size(); j++) {
-				currentRoute.add(partialroute.get(j));
-			}
-			currentRoute.add(destino.getId());
-
-			if(currentDist < bestDist) {
-				bestRoute = currentRoute;
-				bestDist = currentDist;
-			}
-		}
-	}
-
 	public Vector<String> getGarbageNodes() {
 		HashMap<String,Node> copy = new HashMap<String,Node>(nodes);
 		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
@@ -335,17 +241,6 @@ public class Graph {
 			return;
 		}
 	}
-
-	Edge findAresta(Node src, String dest) {
-		for(int i = 0 ; i < src.getArestas().size();i++) {
-			Edge e = src.getArestas().get(i);
-			Node n = e.getDestino();
-			if(n.getId() == dest){
-				return e;
-			}
-		}
-		return null;
-	}
 	
 	public void aStar(Vector <String> garbageNodes){
 	    openQueue = new PriorityQueue<Node>(comparator);
@@ -356,7 +251,6 @@ public class Graph {
 		while(!openQueue.isEmpty() && stop){
 			
 			Node node = openQueue.poll();
-			System.out.println("lolololo " + node.getId());
 			Vector<Node> nodeSons = node.getConnectedNodes();		
 			for(int i=0;i<nodeSons.size();i++){		
 				Node son = nodeSons.get(i);
@@ -379,7 +273,6 @@ public class Graph {
 		Vector <Node> toBeReturned = new Vector<Node>();
 		if(!son.getId().equals("Estacao")){
 			if((garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0) || canBypass(son,garbageNodes)){
-				System.out.println("aiaiaiai");
 				if(parent.getAvailableCapacity()>=son.getValor())
 					son.setAvailableCapacity(parent.getAvailableCapacity()-son.getValor());
 				else son.setAvailableCapacity(son.getValor()-parent.getAvailableCapacity());
@@ -393,7 +286,6 @@ public class Graph {
 				son.updateFValue();
 				toBeReturned.add(son);
 			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue() ){
-				System.out.println("aiaiaiai");
 				if(son.getParent()!=null){
 					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
 				}
@@ -437,15 +329,4 @@ public class Graph {
 		return false;
 	}
 
-	public void printResults(){
-		
-		Node node = nodes.get("Estacao");
-		while(true){
-			if(node.getParent()!=null){
-				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId() + " gvalue= " + node.getgValue());
-			}
-			else break;
-			node = node.getParent();
-		}
-	}
 }

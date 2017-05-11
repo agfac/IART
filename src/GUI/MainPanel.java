@@ -42,13 +42,8 @@ public class MainPanel extends JPanel {
 	private Graph graph;
 	private BufferedImage roadV;
 	private BufferedImage roadH;
-	private BufferedImage roadL;
-	private BufferedImage roadR;
-	private BufferedImage roadT;
-	private BufferedImage roadB;
 	private BufferedImage roadX;
 	private BufferedImage bin;
-	private BufferedImage gas;
 	private BufferedImage dump;
 	private BufferedImage grass;
 	private BufferedImage truckB;
@@ -75,13 +70,8 @@ public class MainPanel extends JPanel {
 		try {
 			roadV = ImageIO.read(new File("resources/roadV.png"));
 			roadH = ImageIO.read(new File("resources/roadH.png"));
-			roadR = ImageIO.read(new File("resources/roadR.png"));
-			roadL = ImageIO.read(new File("resources/roadL.png"));
-			roadT = ImageIO.read(new File("resources/roadT.png"));
-			roadB = ImageIO.read(new File("resources/roadB.png"));
 			roadX = ImageIO.read(new File("resources/roadX.png"));
 			bin = ImageIO.read(new File("resources/bin.png"));
-			gas = ImageIO.read(new File("resources/gas.png"));
 			dump = ImageIO.read(new File("resources/dump.png"));
 			grass = ImageIO.read(new File("resources/grass.jpg"));
 			truckB = ImageIO.read(new File("resources/truckB.png"));
@@ -116,7 +106,7 @@ public class MainPanel extends JPanel {
 
 
 		g.setFont(new Font("Arial", 0, 30));
-		g.setColor(Color.RED);
+		g.setColor(Color.BLUE);
 		//load
 		g.drawString(Integer.toString((int)garbage), 140, 50);
 		

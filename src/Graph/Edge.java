@@ -8,7 +8,7 @@ public class Edge {
 	private Node origem;
 	private int distancia;
 
-	public Edge(Node origem,Node destino, int distancia){
+	Edge(Node origem,Node destino, int distancia){
 		this.destino = destino;
 		this.distancia = distancia;
 		this.graphid = intid;
