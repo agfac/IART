@@ -329,4 +329,14 @@ public class Graph {
 		return false;
 	}
 
+	public void printResults(){
+		Node node = nodes.get("Estacao");
+		while(true){
+			if(node.getParent()!=null){
+				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId() + " gvalue= " + node.getgValue());
+			}
+			else break;
+			node = node.getParent();
+		}
+	}
 }
