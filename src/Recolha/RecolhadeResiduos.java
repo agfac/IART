@@ -18,6 +18,8 @@ public class RecolhadeResiduos {
 	public static String newline = System.getProperty("line.separator");
 	private static Graph g = new Graph();
 	
+	static Vector<Vector<String>> infoDaViagem = new Vector<Vector<String>>();
+	
 	public RecolhadeResiduos(){
 		try {
 			menuload(1);
@@ -27,6 +29,9 @@ public class RecolhadeResiduos {
 		}
 	}
 
+	public Vector<Vector<String>> getInfoDaViagem(){
+		return infoDaViagem;
+	}
 	
 	public Graph getGraph(){
 		return g;
@@ -70,7 +75,6 @@ public class RecolhadeResiduos {
 		Vector <String> garbageNodes = g.getGarbageNodes();
 		Queue<Edge> path = new LinkedList<Edge>();
 		Vector<Node> semiPath = new Vector<Node>();
-
 		while(garbageNodes.size()!=0){
 			try {
 				Thread.sleep(1000);
@@ -103,11 +107,18 @@ public class RecolhadeResiduos {
 		Vector<Node> nodes = new Vector<Node>();
 		nodes.add(son);
 		System.out.println("nova viagem");
+		Vector<String> nosDaViagem = new Vector<String>();
+		
 		while(son.getParent()!=null){
+			if(!son.getId().equals("Estacao")){
+				nosDaViagem.add(son.getId()+"-"+son.getValor());
+			}
 			System.out.println("vou do no "+ son.getParent().getId()+ " para o "+son.getId());
 			son=son.getParent();
 			nodes.add(son);
 		}
+		infoDaViagem.add(nosDaViagem);
+		
 		int capacity=Utils.MAX_TRUCK_VALUE;
 		
 		for(int i=nodes.size()-1;i>=0;i--){

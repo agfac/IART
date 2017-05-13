@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
@@ -61,12 +62,15 @@ public class MainPanel extends JPanel {
 
 	RecolhadeResiduos recolha;
 
-
-
+	static Vector<Vector<String>> infoDaViagem;
+	int nrViagem = 1;
+	
 	public MainPanel() {
 
 		recolha = new RecolhadeResiduos();
 		graph = recolha.getGraph();
+		infoDaViagem = recolha.getInfoDaViagem();
+		
 		try {
 			roadV = ImageIO.read(new File("resources/roadV.png"));
 			roadH = ImageIO.read(new File("resources/roadH.png"));
@@ -232,6 +236,7 @@ public class MainPanel extends JPanel {
 				if((x2 > x1 && truckX >= x2) || (x2 < x1 && truckX <= x2)) {
 					truckX = path.peek().getDestino().getPosX();
 					path.remove();
+					garbUpdate(e.getDestino().getId(), e.getDestino().isIsGarbage());
 				}
 			}
 			else if (deltax == 0) {
@@ -242,6 +247,7 @@ public class MainPanel extends JPanel {
 				if((y2 > y1 && truckY >= y2) || (y2 < y1 && truckY <= y2)) {
 					truckY = path.peek().getDestino().getPosY();					
 					path.remove();
+					garbUpdate(e.getDestino().getId(), e.getDestino().isIsGarbage());
 				}
 			}else{
 				float inc = (float) (deltax < 0 ? 0.1 : -0.1);
@@ -255,15 +261,41 @@ public class MainPanel extends JPanel {
 					if((y2 > y1 && truckY >= y2) || (y2 < y1 && truckY <= y2)){
 						truckY = path.peek().getDestino().getPosY();
 						path.remove();
+						
+						garbUpdate(e.getDestino().getId(), e.getDestino().isIsGarbage());
+						
 						if(e.getDestino().getId().equals("Estacao")){
 							truckY=0;
 							truckX=0;
+							garbage=0;
+							nrViagem++;
 						}
 					}
 				}
 			}
+
+			
+			
 			repaint();
 		}
 		};
+		
+	public void garbUpdate(String node, Boolean eLixo){
+		System.out.println(node);
+		
+		if(infoDaViagem.size() >= nrViagem){
+			for(int x = 0; x < infoDaViagem.elementAt(nrViagem-1).size(); x++){
+				String allInfo = infoDaViagem.elementAt(nrViagem-1).elementAt(x);
+				String[] tokens = allInfo.split("-");
+				String nodeId = tokens[0];
+				String value = tokens[1];
+				System.out.println(nodeId + "-" + value);
+				if(node.equals(nodeId) && eLixo){
+					garbage+=Integer.parseInt(value);
+				}
+				
+			}
+		}
+	}
 
 }
