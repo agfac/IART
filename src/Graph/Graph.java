@@ -68,11 +68,17 @@ public class Graph {
 	}
 
 	public Vector<String> getGarbageNodes() {
+		
 		HashMap<String,Node> copy = new HashMap<String,Node>(nodes);
+		
 		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
+		
 		Vector<String> finale = new Vector<String>();
+		
 		while(it.hasNext()) {
+			
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			
 			if(((Node) pair.getValue()).isIsGarbage())
 				if(((Node) pair.getValue()).getValor() >Utils.MIN_VALUE_GARBAGE){
 					finale.add((String) pair.getKey());

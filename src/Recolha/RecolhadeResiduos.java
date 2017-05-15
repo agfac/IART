@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.AbstractQueue;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import Graph.Graph;
 import Graph.Node;
@@ -19,10 +23,11 @@ public class RecolhadeResiduos {
 	private static Graph g = new Graph();
 	
 	static Vector<Vector<String>> infoDaViagem = new Vector<Vector<String>>();
+	private static HashMap<String,String> nodeValuesDisplay = new HashMap<String,String>();
 	
-	public RecolhadeResiduos(){
+	public RecolhadeResiduos(int i){
 		try {
-			menuload(1);
+			menuload(i);
 		} catch (NumberFormatException | InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -66,7 +71,17 @@ public class RecolhadeResiduos {
 			Thread.sleep(1000);
 			break;
 		}
-
+		
+		HashMap<String,Node> nodes = g.getNodes();
+		
+		Iterator<Entry<String, Node>> it = nodes.entrySet().iterator();
+		
+		while(it.hasNext()){
+			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			
+			addNodeDisplay((String)pair.getKey(), String.valueOf((pair.getValue().getValor())));
+			
+		}
 		//getShitDone();
 		//g.printResults();
 	}
@@ -120,24 +135,49 @@ public class RecolhadeResiduos {
 		
 		for(int i=nodes.size()-1;i>=0;i--){
 			if(capacity>0 && nodes.get(i).isIsGarbage()){
+				int num=nodes.get(i).getValor();
 				if(capacity>nodes.get(i).getValor()){
 					capacity-=nodes.get(i).getValor();
 					nodes.get(i).setValor(0);
 				}else{
 					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
 					capacity=0;
+					num=capacity-nodes.get(i).getValor();
 				}
 				if(!son.getId().equals("Estacao")){
 					
 					if(nodes.get(i).getValor()>Utils.MAX_TRUCK_VALUE )
-						nosDaViagem.add(nodes.get(i).getId()+"-"+(Utils.MAX_TRUCK_VALUE-capacity)+"-true");
-					else nosDaViagem.add(nodes.get(i).getId()+"-"+(Utils.MAX_TRUCK_VALUE-capacity)+"-false");
+						nosDaViagem.add(nodes.get(i).getId()+"-"+num+"-true");
+					else nosDaViagem.add(nodes.get(i).getId()+"-"+num+"-false");
 					
 				}
 			}
 		}
 		infoDaViagem.add(nosDaViagem);
 		return nodes;
+	}
+
+	/**
+	 * @return the nodeValuesDisplay
+	 */
+	public HashMap<String, String> getNodeValuesDisplay() {
+		return nodeValuesDisplay;
+	}
+
+	/**
+	 * @param nodeValuesDisplay the nodeValuesDisplay to set
+	 */
+	public void setNodeValuesDisplay(HashMap<String, String> nodeValuesDisplay) {
+		this.nodeValuesDisplay = nodeValuesDisplay;
+	}
+	
+	public static void addNodeDisplay(String id, String value){
+		nodeValuesDisplay.put(id, value);
+	}
+	
+	public String getValueNodeDisplay(String id){
+		
+		return nodeValuesDisplay.get(id);
 	}
 
 }
