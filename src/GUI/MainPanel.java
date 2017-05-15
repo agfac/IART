@@ -236,7 +236,7 @@ public class MainPanel extends JPanel {
 				if((x2 > x1 && truckX >= x2) || (x2 < x1 && truckX <= x2)) {
 					truckX = path.peek().getDestino().getPosX();
 					path.remove();
-					garbUpdate(e.getDestino().getId(), e.getDestino().isIsGarbage());
+					garbUpdate(e.getDestino());
 				}
 			}
 			else if (deltax == 0) {
@@ -247,7 +247,7 @@ public class MainPanel extends JPanel {
 				if((y2 > y1 && truckY >= y2) || (y2 < y1 && truckY <= y2)) {
 					truckY = path.peek().getDestino().getPosY();					
 					path.remove();
-					garbUpdate(e.getDestino().getId(), e.getDestino().isIsGarbage());
+					garbUpdate(e.getDestino());
 				}
 			}else{
 				float inc = (float) (deltax < 0 ? 0.1 : -0.1);
@@ -262,7 +262,7 @@ public class MainPanel extends JPanel {
 						truckY = path.peek().getDestino().getPosY();
 						path.remove();
 						
-						garbUpdate(e.getDestino().getId(), e.getDestino().isIsGarbage());
+						garbUpdate(e.getDestino());
 						
 						if(e.getDestino().getId().equals("Estacao")){
 							truckY=0;
@@ -280,8 +280,7 @@ public class MainPanel extends JPanel {
 		}
 		};
 		
-	public void garbUpdate(String node, Boolean eLixo){
-		System.out.println(node);
+	public void garbUpdate(Node node){
 		
 		if(infoDaViagem.size() >= nrViagem){
 			for(int x = 0; x < infoDaViagem.elementAt(nrViagem-1).size(); x++){
@@ -289,9 +288,12 @@ public class MainPanel extends JPanel {
 				String[] tokens = allInfo.split("-");
 				String nodeId = tokens[0];
 				String value = tokens[1];
+				String lixo = tokens[2];
+				
 				System.out.println(nodeId + "-" + value);
-				if(node.equals(nodeId) && eLixo){
-					garbage+=Integer.parseInt(value);
+				if(node.getId().equals(nodeId) && node.isIsGarbage()){
+					node.setIsGarbage(Boolean.getBoolean(lixo));
+					garbage=Integer.parseInt(value);
 				}
 				
 			}

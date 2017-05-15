@@ -110,19 +110,16 @@ public class RecolhadeResiduos {
 		Vector<String> nosDaViagem = new Vector<String>();
 		
 		while(son.getParent()!=null){
-			if(!son.getId().equals("Estacao")){
-				nosDaViagem.add(son.getId()+"-"+son.getValor());
-			}
+			
 			System.out.println("vou do no "+ son.getParent().getId()+ " para o "+son.getId());
 			son=son.getParent();
 			nodes.add(son);
 		}
-		infoDaViagem.add(nosDaViagem);
 		
 		int capacity=Utils.MAX_TRUCK_VALUE;
 		
 		for(int i=nodes.size()-1;i>=0;i--){
-			if(capacity>0){
+			if(capacity>0 && nodes.get(i).isIsGarbage()){
 				if(capacity>nodes.get(i).getValor()){
 					capacity-=nodes.get(i).getValor();
 					nodes.get(i).setValor(0);
@@ -130,8 +127,16 @@ public class RecolhadeResiduos {
 					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
 					capacity=0;
 				}
+				if(!son.getId().equals("Estacao")){
+					
+					if(nodes.get(i).getValor()>Utils.MAX_TRUCK_VALUE )
+						nosDaViagem.add(nodes.get(i).getId()+"-"+(Utils.MAX_TRUCK_VALUE-capacity)+"-true");
+					else nosDaViagem.add(nodes.get(i).getId()+"-"+(Utils.MAX_TRUCK_VALUE-capacity)+"-false");
+					
+				}
 			}
 		}
+		infoDaViagem.add(nosDaViagem);
 		return nodes;
 	}
 
