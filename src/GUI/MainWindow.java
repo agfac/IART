@@ -50,7 +50,7 @@ public class MainWindow {
 		frmAAlgorithmWaste = new JFrame();
 		frmAAlgorithmWaste.setIconImage(Toolkit.getDefaultToolkit().getImage("resources/truckR.png"));
 		frmAAlgorithmWaste.setTitle("A* Algorithm: Waste collection problem");
-		frmAAlgorithmWaste.setBounds(100, 100, 800, 800);
+		frmAAlgorithmWaste.setBounds(100, 100, 1000, 1000);
 		frmAAlgorithmWaste.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panel = new MainPanel(1);
 		frmAAlgorithmWaste.getContentPane().add(panel);
@@ -85,9 +85,6 @@ public class MainWindow {
 		        frmAAlgorithmWaste.getContentPane().add(panel);
 		        frmAAlgorithmWaste.getContentPane().validate();		        
 		        frmAAlgorithmWaste.getContentPane().repaint();
-		        
-
-		        	
 		    }
 		});
 		

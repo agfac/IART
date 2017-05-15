@@ -39,7 +39,7 @@ public class MainPanel extends JPanel {
 
 	private final int X = 40;
 	private final int Y = 75;
-	private final int L = 50;
+	private final int L = 70;
 
 	private Graph graph;
 	private BufferedImage roadV;
@@ -206,7 +206,7 @@ public class MainPanel extends JPanel {
 					valueGarbageDisplay=nodeValuesDisplay.get(((Node) pair.getValue()).getId());
 
 					if(((Node) pair.getValue()).isIsGarbage()){
-						g.setColor(Color.RED);
+						g.setColor(Color.YELLOW);
 
 					}
 
@@ -317,9 +317,7 @@ public class MainPanel extends JPanel {
 				if(node.getId().equals(nodeId) && node.isIsGarbage()){
 					node.setIsGarbage(Boolean.getBoolean(lixo));
 					garbage+=Integer.parseInt(value);
-					
-					System.out.println("GARBAGE: " + garbage);
-					
+										
 					DecimalFormat format = new DecimalFormat();
 			        format.setDecimalSeparatorAlwaysShown(false);
 			        
