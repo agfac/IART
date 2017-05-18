@@ -50,13 +50,13 @@ public class MainWindow {
 		frmAAlgorithmWaste = new JFrame();
 		frmAAlgorithmWaste.setIconImage(Toolkit.getDefaultToolkit().getImage("resources/truckR.png"));
 		frmAAlgorithmWaste.setTitle("A* Algorithm: Waste collection problem");
-		frmAAlgorithmWaste.setBounds(100, 100, 1000, 1000);
+		frmAAlgorithmWaste.setBounds(100, 100, 920, 1000);
 		frmAAlgorithmWaste.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panel = new MainPanel(1);
 		frmAAlgorithmWaste.getContentPane().add(panel);
 
 		JPanel panel_1 = new JPanel();
-		frmAAlgorithmWaste.getContentPane().add(panel_1, BorderLayout.SOUTH);
+		frmAAlgorithmWaste.getContentPane().add(panel_1, BorderLayout.NORTH);
 
 		JButton btnStartSimulation = new JButton("Start simulation");
 		btnStartSimulation.addActionListener(new ActionListener() {

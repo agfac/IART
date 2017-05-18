@@ -320,7 +320,7 @@ public class Graph {
 	
 	private boolean canBypass(Node son, Vector<String> garbageNodes){
 		Node test = son;
-		if(garbageNodes.size()==1 && test.getParent()!=null){
+		if(garbageNodes.size()<=2 && test.getParent()!=null){
 			while(true){
 				if(test.getParent()==null)
 					break;

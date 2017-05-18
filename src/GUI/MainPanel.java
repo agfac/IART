@@ -312,12 +312,17 @@ public class MainPanel extends JPanel {
 				String nodeId = tokens[0];
 				String value = tokens[1];
 				String lixo = tokens[2];
-
-				System.out.println(nodeId + "-" + value);
+				System.out.println("INFO: " + allInfo);
+				//System.out.println(nodeId + "-" + value);
 				if(node.getId().equals(nodeId) && node.isIsGarbage()){
 					node.setIsGarbage(Boolean.getBoolean(lixo));
+					
+					System.out.println("GARBAGE: " + garbage);
+					
 					garbage+=Integer.parseInt(value);
-										
+					
+					
+					
 					DecimalFormat format = new DecimalFormat();
 			        format.setDecimalSeparatorAlwaysShown(false);
 			        

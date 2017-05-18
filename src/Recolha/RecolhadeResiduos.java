@@ -141,8 +141,9 @@ public class RecolhadeResiduos {
 					nodes.get(i).setValor(0);
 				}else{
 					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
+					num=capacity;
 					capacity=0;
-					num=capacity-nodes.get(i).getValor();
+					
 				}
 				if(!son.getId().equals("Estacao")){
 					
