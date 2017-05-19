@@ -80,7 +80,7 @@ public class Graph {
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
 			
 			if(((Node) pair.getValue()).isIsGarbage())
-				if(((Node) pair.getValue()).getValor() >Utils.MIN_VALUE_GARBAGE){
+				if(((Node) pair.getValue()).getValor() > Utils.MIN_VALUE_GARBAGE){
 					finale.add((String) pair.getKey());
 				}
 			it.remove();
@@ -249,25 +249,39 @@ public class Graph {
 	}
 	
 	public void aStar(Vector <String> garbageNodes){
-	    openQueue = new PriorityQueue<Node>(comparator);
+	   
+		openQueue = new PriorityQueue<Node>(comparator);
+		
 		openQueue.add(nodes.get("Central"));
 		
 		System.out.println("tamanho do lixo " + garbageNodes.size());
-		boolean stop=true;
+		
+		boolean stop = true;
+		
 		while(!openQueue.isEmpty() && stop){
 			
 			Node node = openQueue.poll();
+		
 			Vector<Node> nodeSons = node.getConnectedNodes();		
+			
 			for(int i=0;i<nodeSons.size();i++){		
+			
 				Node son = nodeSons.get(i);
+				
 				Vector<Node> astar = astarRecursive(son,garbageNodes,node);
+				
 				for(int j=0;j<astar.size();j++){
+				
 					if(!openQueue.contains(astar.get(j)) ){
+					
 						openQueue.add(astar.get(j));
 					}
 				}	
+				
 				if(nodeSons.get(i).getId().equals("Estacao")){
+				
 					stop=false;
+					
 					System.out.println("encontre");
 				}
 					

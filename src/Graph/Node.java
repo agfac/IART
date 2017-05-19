@@ -5,6 +5,7 @@ import java.util.Vector;
 import Recolha.Utils;
 
 public class Node {
+	
 	private static int intid = 0;
 	private int graphid;
 	private int valor;
@@ -24,6 +25,7 @@ public class Node {
 	private int posY = 0;
 	
 	public Node(String id){
+		
 		this.id = id;
 		this.arestas = new Vector<Edge>();
 		this.valor = 0;
@@ -45,12 +47,16 @@ public class Node {
 	}
 	
 	public Node(String id, int valor, int posX, int posY) {
+		
 		this.id = id;
 		this.arestas = new Vector<Edge>();
 		this.valor = valor;
+		
 		if(valor>Utils.MIN_VALUE_GARBAGE)
 			this.isGarbage = true;
-		else this.isGarbage = false;
+		else 
+			this.isGarbage = false;
+		
 		this.tempdist = Integer.MAX_VALUE;
 		this.temproute = new Vector<String>();
 		this.tempvisited = false;
@@ -104,7 +110,6 @@ public class Node {
 		this.tempdist = tempdist;
 	}
 	
-	
 	public Vector<String> getTemproute(){
 		return temproute;
 	}
@@ -138,11 +143,15 @@ public class Node {
 	}
 	
 	public Vector<Node> getConnectedNodes(){
+		
 		Vector<Node> connected = new Vector<Node>();
 		
 		for(int i = 0; i<arestas.size(); i++){
+			
 			Edge edge = arestas.get(i);
+			
 			Node no = edge.getDestino();
+			
 			connected.add(no);
 		}
 		
@@ -182,8 +191,10 @@ public class Node {
 	}
 	
 	public void updateGValue(){	
-		this.distance=distanceToParent(this.parent)+parent.distance;
-		this.gValue = 0.3*distance*distance + 0.7*availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
+		
+		this.distance = distanceToParent(this.parent)+parent.distance;
+		
+		this.gValue = Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
 	}
 	
 	public void updateFValue(){

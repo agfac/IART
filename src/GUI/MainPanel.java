@@ -36,7 +36,6 @@ public class MainPanel extends JPanel {
 	Queue<Edge> path;
 	ArrayList<Edge> edges = new ArrayList<Edge>();
 
-
 	private final int X = 40;
 	private final int Y = 75;
 	private final int L = 70;
@@ -64,15 +63,21 @@ public class MainPanel extends JPanel {
 	RecolhadeResiduos recolha;
 
 	static Vector<Vector<String>> infoDaViagem;
+	
 	static HashMap<String,String> nodeValuesDisplay;
+	
 	int nrViagem = 0;
+	
 	String valueGarbageDisplay = "";
 
 	public MainPanel(int j) {
 
 		recolha = new RecolhadeResiduos(j);
+		
 		graph = recolha.getGraph();
+		
 		infoDaViagem = recolha.getInfoDaViagem();
+		
 		nodeValuesDisplay = recolha.getNodeValuesDisplay();
 
 		try {
@@ -86,9 +91,7 @@ public class MainPanel extends JPanel {
 			truckT = ImageIO.read(new File("resources/truckT.png"));
 			truckR = ImageIO.read(new File("resources/truckR.png"));
 			truckL = ImageIO.read(new File("resources/truckL.png"));
-
 			start = ImageIO.read(new File("resources/start.png"));
-
 			garbageLevel = ImageIO.read(new File("resources/garbageLevel.png"));
 			truck = truckR;
 		} catch (IOException e) {
@@ -96,7 +99,9 @@ public class MainPanel extends JPanel {
 		}
 
 		HashMap<String,Node> copy = new HashMap<String,Node>(this.graph.getNodes());
+		
 		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
+		
 		while(it.hasNext()) {
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
 
@@ -109,14 +114,20 @@ public class MainPanel extends JPanel {
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		
 		super.paintComponent(g);
+		
 		g.drawImage(garbageLevel, 80, 5,50,50,null);
+		
 		g.drawImage(truckR, 200, 0,60,60,null);
 
 		g.setFont(new Font("Arial", 0, 30));
+		
 		g.setColor(Color.BLUE);
+		
 		//load
 		g.drawString(Integer.toString((int)garbage), 140, 50);
+		
 		g.drawString(Integer.toString((int)nrViagem), 260, 50);
 
 		for(int i=0;i<=10;i++){
@@ -126,7 +137,6 @@ public class MainPanel extends JPanel {
 		}
 
 		for(Edge i : edges) {
-
 
 			int x1,x2,y1,y2, deltax, deltay;
 			x1 = i.getOrigem().getPosX();
@@ -173,8 +183,6 @@ public class MainPanel extends JPanel {
 				}
 				g.drawImage(image, X + (x2) * L, Y + (y1) * L, L, L, null);
 			}
-
-
 		}
 
 		HashMap<String,Node> copy = new HashMap<String,Node>(this.graph.getNodes());
@@ -205,11 +213,8 @@ public class MainPanel extends JPanel {
 
 					valueGarbageDisplay=nodeValuesDisplay.get(((Node) pair.getValue()).getId());
 
-					if(((Node) pair.getValue()).isIsGarbage()){
+					if(((Node) pair.getValue()).isIsGarbage())
 						g.setColor(Color.YELLOW);
-
-					}
-
 					else 
 						g.setColor(Color.WHITE);
 
@@ -225,13 +230,18 @@ public class MainPanel extends JPanel {
 	}
 
 	public void startSimulation() {
-		path=recolha.getShitDone();
+
+		path = recolha.getShitDone();
+
 		new Timer(truckSpeed,paintTimer).start();
+
 		setDoubleBuffered(true);
 	}
 
 	Action paintTimer = new AbstractAction() {
+		
 		public void actionPerformed(ActionEvent event) {
+
 			Edge e = path.peek();
 
 			if(e == null)
@@ -239,16 +249,14 @@ public class MainPanel extends JPanel {
 
 			int x1,x2,y1,y2, deltax, deltay;
 
-
-
 			x1 = e.getOrigem().getPosX();
 			x2 = e.getDestino().getPosX();
 			y1 = e.getOrigem().getPosY();
 			y2 = e.getDestino().getPosY();
 
-
 			deltax = x1 - x2;
 			deltay = y1 - y2;
+			
 			if(deltay == 0) {
 
 				float inc = (float) (deltax < 0 ? 0.1 : -0.1);
@@ -296,9 +304,6 @@ public class MainPanel extends JPanel {
 					}
 				}
 			}
-
-
-
 			repaint();
 		}
 	};
@@ -306,29 +311,37 @@ public class MainPanel extends JPanel {
 	public void garbUpdate(Node node){
 
 		if(infoDaViagem.size() >= nrViagem){
+
 			for(int x = 0; x < infoDaViagem.elementAt(nrViagem).size(); x++){
+
 				String allInfo = infoDaViagem.elementAt(nrViagem).elementAt(x);
+
 				String[] tokens = allInfo.split("-");
+
 				String nodeId = tokens[0];
+
 				String value = tokens[1];
+
 				String lixo = tokens[2];
+
 				System.out.println("INFO: " + allInfo);
+
 				//System.out.println(nodeId + "-" + value);
+
 				if(node.getId().equals(nodeId) && node.isIsGarbage()){
+
 					node.setIsGarbage(Boolean.getBoolean(lixo));
-					
+
 					System.out.println("GARBAGE: " + garbage);
-					
-					garbage+=Integer.parseInt(value);
-					
-					
-					
+
+					garbage+=Integer.parseInt(value);	
+
 					DecimalFormat format = new DecimalFormat();
-			        format.setDecimalSeparatorAlwaysShown(false);
-			        
+
+					format.setDecimalSeparatorAlwaysShown(false);
+
 					nodeValuesDisplay.replace(nodeId, format.format((Integer.parseInt(nodeValuesDisplay.get(nodeId)) - Integer.parseInt(value))));
 				}
-
 			}
 		}
 	}
