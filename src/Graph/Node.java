@@ -17,7 +17,7 @@ public class Node {
 	private Vector<Edge> arestas;
 	private boolean isGarbage;
 	private Node parent;
-	private double fValue=Integer.MAX_VALUE;
+	private double fValue = Integer.MAX_VALUE;
 	private double gValue = Integer.MAX_VALUE;
 	private int distance=0;
 	private int availableCapacity=Utils.MAX_TRUCK_VALUE;
@@ -198,13 +198,16 @@ public class Node {
 	}
 	
 	public void updateFValue(){
-		this.fValue=this.gValue+this.distanciaEstacao;
+		
+		this.fValue = this.gValue+this.distanciaEstacao;
 	}
 	
 	public int getValueEdge(String nome){
 		
 		for(int i = 0; i< arestas.size(); i++){
+			
 			Edge e = arestas.get(i);
+			
 			if(e.getDestino().getId().equals(nome))
 				return e.getDistancia();
 		}
@@ -213,17 +216,24 @@ public class Node {
 	}
 	
 	public double calculateTempGValueWithoutPassing(Node parent){
+		
 		double gValue;
-		int distance= distanceToParent(parent) + parent.distance;
-		gValue=0.3*distance*distance + 0.7*parent.availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
+		
+		int distance = distanceToParent(parent) + parent.distance;
+		
+		gValue = Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*parent.availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
 		
 		return gValue;
 	}
 	
 	public double calculateTempGValue(Node parent){
+		
 		double gValue;
+		
 		int distance= distanceToParent(parent) + parent.distance;
-		gValue= (0.3*distance*distance + 0.7*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance*distance);
+		
+		gValue= (Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance*distance);
+		
 		return gValue;
 	}
 
@@ -234,5 +244,4 @@ public class Node {
 	public int getPosY() {
 		return posY;
 	}
-
 }
