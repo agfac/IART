@@ -18,18 +18,20 @@ import Graph.Node;
 import Graph.Edge;
 
 public class RecolhadeResiduos {
-	static BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-	public static String newline = System.getProperty("line.separator");
+			
 	private static Graph g = new Graph();
 	
 	static Vector<Vector<String>> infoDaViagem = new Vector<Vector<String>>();
+	
 	private static HashMap<String,String> nodeValuesDisplay = new HashMap<String,String>();
 	
 	public RecolhadeResiduos(int i){
+		
 		try {
+			
 			menuload(i);
+			
 		} catch (NumberFormatException | InterruptedException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -45,26 +47,22 @@ public class RecolhadeResiduos {
 	static void menuload(int i) throws InterruptedException, NumberFormatException, IOException {
 
 		switch(i) {
-		case 9:
-			System.out.println("Exiting");
-			Thread.sleep(3000);
-			System.exit(0);
-			break;
+		
 		case 1:
-			g.loadNodes("nodes.txt");
-			g.loadEdges("edges.txt");
+			g.loadNodes("resources/nodes.txt");
+			g.loadEdges("resources/edges.txt");
 			break;
 		case 2:
-			g.loadNodes("nodes2.txt");
-			g.loadEdges("edges2.txt");
+			g.loadNodes("resources/nodes2.txt");
+			g.loadEdges("resources/edges2.txt");
 			break;
 		case 3:
-			g.loadNodes("nodes3.txt");
-			g.loadEdges("edges3.txt");
+			g.loadNodes("resources/nodes3.txt");
+			g.loadEdges("resources/edges3.txt");
 			break;
 		case 4:
-			g.loadNodes("nodes4.txt");
-			g.loadEdges("edges4.txt");
+			g.loadNodes("resources/nodes4.txt");
+			g.loadEdges("resources/edges4.txt");
 			break;
 		default:
 			System.out.println("Unknown Input!");
