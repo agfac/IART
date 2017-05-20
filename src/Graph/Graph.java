@@ -17,23 +17,37 @@ import Recolha.Utils;
 public class Graph {
 
 	HashMap<String,Node> nodes = new HashMap<String,Node>();
+	
 	Node root;
+	
 	Node destino;
+	
 	Comparator<Node> comparator = new NodeComparator();
-    PriorityQueue<Node> openQueue = new PriorityQueue<Node>(comparator);
+    
+	PriorityQueue<Node> openQueue;
 	
 	public Graph() {
+		
 	}
 	
 	public void resetGraphForVoyage(){
+	
 		HashMap<String,Node> copy = new HashMap<String,Node>(nodes);
+		
 		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
+		
 		while(it.hasNext()) {
+		
 			Map.Entry<String, Node> pair = (Map.Entry<String, Node>)it.next();
+			
 			((Node) pair.getValue()).setParent(null);
+			
 			((Node) pair.getValue()).setAvailableCapacity(Utils.MAX_TRUCK_VALUE);
+			
 			((Node) pair.getValue()).setGValue(Integer.MAX_VALUE);
+			
 			((Node) pair.getValue()).setFValue(Integer.MAX_VALUE);
+			
 			it.remove();
 		}
 	}
@@ -61,7 +75,6 @@ public class Graph {
 	public void setRoot(Node root1) {
 		root = root1;
 	}
-
 
 	public void addNode(Node node) {
 		nodes.put(node.getId(), node);
@@ -91,12 +104,19 @@ public class Graph {
 	public void loadNodes(String filename){
 
 		String idNode;
+		
 		int valorNode, valorDistanciaEstacao;
+		
 		Node node;
+		
 		Boolean isNumericNode = false;
+		
 		int posX, posY;
+		
 		String line;
+		
 		BufferedReader br;
+		
 		try {
 			br = new BufferedReader(new FileReader(filename));
 			line = br.readLine();
@@ -284,47 +304,69 @@ public class Graph {
 					
 					System.out.println("encontre");
 				}
-					
 			}
 		}
 	}
 	
 	public Vector<Node> astarRecursive(Node son, Vector<String> garbageNodes, Node parent){
+		
 		Vector <Node> toBeReturned = new Vector<Node>();
+		
 		if(!son.getId().equals("Estacao")){
+			
 			if((garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0) || canBypass(son,garbageNodes)){
+				
 				if(parent.getAvailableCapacity()>=son.getValor())
+					
 					son.setAvailableCapacity(parent.getAvailableCapacity()-son.getValor());
-				else son.setAvailableCapacity(son.getValor()-parent.getAvailableCapacity());
+				else 
+					son.setAvailableCapacity(0);
 				
 				if(son.getParent()!=null){
 					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
 				}
 				
 				son.setParent(parent);
+				
 				son.updateGValue();			
+				
 				son.updateFValue();
+				
 				toBeReturned.add(son);
+				
 			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue() ){
+				
 				if(son.getParent()!=null){
 					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
 				}
+				
 				son.setAvailableCapacity(parent.getAvailableCapacity());
+				
 				son.setParent(parent);
+				
 				son.updateGValue();
+				
 				son.updateFValue();
+				
 				for(int i=0;i< son.getConnectedNodes().size();i++){
+					
 					Vector <Node> temp = astarRecursive( son.getConnectedNodes().get(i),garbageNodes, son);
+					
 					for(int j=0;j<temp.size();j++){
 						toBeReturned.addElement(temp.get(j));
 					}
 				}
 			}
-		}else{
+		}
+		else{
 			if(son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()<Utils.MAX_TRUCK_VALUE){
+				
 				son.setParent(parent);
+				
 				son.setAvailableCapacity(parent.getAvailableCapacity());
+				
 				son.updateGValue();
+				
 				son.updateFValue();
 			}
 			
@@ -333,29 +375,39 @@ public class Graph {
 	}
 	
 	private boolean canBypass(Node son, Vector<String> garbageNodes){
+		
 		Node test = son;
+		
 		if(garbageNodes.size()<=2 && test.getParent()!=null){
+			
 			while(true){
+				
 				if(test.getParent()==null)
 					break;
 				if(garbageNodes.contains(test.getParent())){
 					return false;
 				}
+				
 				test=test.getParent();
 			}
+			
 			return true;
 		}
-		
 		return false;
 	}
 
 	public void printResults(){
+		
 		Node node = nodes.get("Estacao");
+		
 		while(true){
+			
 			if(node.getParent()!=null){
 				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId() + " gvalue= " + node.getgValue());
 			}
-			else break;
+			else 
+				break;
+			
 			node = node.getParent();
 		}
 	}

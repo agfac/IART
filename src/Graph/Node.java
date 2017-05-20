@@ -199,7 +199,7 @@ public class Node {
 	
 	public void updateFValue(){
 		
-		this.fValue = this.gValue+this.distanciaEstacao;
+		this.fValue = this.gValue+Utils.DISTANCE_WEIGHT*this.distanciaEstacao;
 	}
 	
 	public int getValueEdge(String nome){
@@ -230,9 +230,9 @@ public class Node {
 		
 		double gValue;
 		
-		int distance= distanceToParent(parent) + parent.distance;
+		int distance = distanceToParent(parent) + parent.distance;
 		
-		gValue= (Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance*distance);
+		gValue = (Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance*distance);
 		
 		return gValue;
 	}
