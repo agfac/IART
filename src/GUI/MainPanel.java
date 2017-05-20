@@ -74,6 +74,8 @@ public class MainPanel extends JPanel {
 
 		recolha = new RecolhadeResiduos(j);
 		
+		System.out.println(recolha.getGraph().getNodes().size());
+		
 		graph = recolha.getGraph();
 		
 		infoDaViagem = recolha.getInfoDaViagem();
@@ -186,7 +188,9 @@ public class MainPanel extends JPanel {
 		}
 
 		HashMap<String,Node> copy = new HashMap<String,Node>(this.graph.getNodes());
-
+		
+		System.out.println(graph.getNodes().size());
+		
 		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
 
 		while(it.hasNext()) {

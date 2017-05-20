@@ -19,11 +19,11 @@ import Graph.Edge;
 
 public class RecolhadeResiduos {
 			
-	private static Graph g = new Graph();
+	private Graph g = new Graph();
 	
 	static Vector<Vector<String>> infoDaViagem = new Vector<Vector<String>>();
 	
-	private static HashMap<String,String> nodeValuesDisplay = new HashMap<String,String>();
+	private HashMap<String,String> nodeValuesDisplay = new HashMap<String,String>();
 	
 	public RecolhadeResiduos(int i){
 		
@@ -45,7 +45,7 @@ public class RecolhadeResiduos {
 		return g;
 	}
 	
-	static void menuload(int i) throws InterruptedException, NumberFormatException, IOException {
+	public void menuload(int i) throws InterruptedException, NumberFormatException, IOException {
 
 		switch(i) {
 		
@@ -125,11 +125,11 @@ public class RecolhadeResiduos {
 		return path;
 	}
 	
-	private static void resetGraphForVoyage(){
+	private void resetGraphForVoyage(){
 		g.resetGraphForVoyage();
 	}
 	
-	private static Vector<Node> getVoyage(){
+	private Vector<Node> getVoyage(){
 		
 		Node son = g.getNodes().get("Estacao");
 		
@@ -204,7 +204,7 @@ public class RecolhadeResiduos {
 		this.nodeValuesDisplay = nodeValuesDisplay;
 	}
 	
-	public static void addNodeDisplay(String id, String value){
+	public void addNodeDisplay(String id, String value){
 		nodeValuesDisplay.put(id, value);
 	}
 	
