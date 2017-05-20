@@ -17,4 +17,4 @@ Aresta - 10 - Estacao - 15
 Aresta - 11 - 12 - 4
 Aresta - 11 - 13 - 8
 Aresta - 12 - 13 - 10
-Aresta - 13 - Estacao - 7
+Aresta - 13 - Estacao - 10
