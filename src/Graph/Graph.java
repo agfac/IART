@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,6 +26,8 @@ public class Graph {
 	Comparator<Node> comparator = new NodeComparator();
     
 	PriorityQueue<Node> openQueue;
+	
+	ArrayList<Node> closeQueue;
 	
 	public Graph() {
 		
@@ -272,8 +275,10 @@ public class Graph {
 	   
 		openQueue = new PriorityQueue<Node>(comparator);
 		
-		openQueue.add(nodes.get("Central"));
+		closeQueue = new ArrayList<Node>();
 		
+		openQueue.add(nodes.get("Central"));
+		System.out.println("começouuuuuuuuuuuuuuuuuuuuuuuuuuu");
 		System.out.println("tamanho do lixo " + garbageNodes.size());
 		
 		boolean stop = true;
@@ -281,6 +286,8 @@ public class Graph {
 		while(!openQueue.isEmpty() && stop){
 			
 			Node node = openQueue.poll();
+			
+			
 		
 			Vector<Node> nodeSons = node.getConnectedNodes();		
 			
@@ -293,7 +300,7 @@ public class Graph {
 				for(int j=0;j<astar.size();j++){
 				
 					if(!openQueue.contains(astar.get(j)) ){
-					
+						System.out.println("vou addicionar o no " + astar.get(j).getId());
 						openQueue.add(astar.get(j));
 					}
 				}	
@@ -305,6 +312,7 @@ public class Graph {
 					System.out.println("encontre");
 				}
 			}
+			closeQueue.add(node);
 		}
 	}
 	
@@ -314,8 +322,8 @@ public class Graph {
 		
 		if(!son.getId().equals("Estacao")){
 			
-			if((garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0) || canBypass(son,garbageNodes)){
-				
+			if((garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0) || (canBypass() && (garbageNodes.contains(son.getId())||(parent.getAvailableCapacity()<Utils.MAX_TRUCK_VALUE)))){
+				//System.out.println("entrou aqui " + son.getId() + " " + son.getValor());
 				if(parent.getAvailableCapacity()>=son.getValor())
 					
 					son.setAvailableCapacity(parent.getAvailableCapacity()-son.getValor());
@@ -323,7 +331,7 @@ public class Graph {
 					son.setAvailableCapacity(0);
 				
 				if(son.getParent()!=null){
-					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
+					//System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
 				}
 				
 				son.setParent(parent);
@@ -337,7 +345,7 @@ public class Graph {
 			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue() ){
 				
 				if(son.getParent()!=null){
-					System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
+					//System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
 				}
 				
 				son.setAvailableCapacity(parent.getAvailableCapacity());
@@ -374,26 +382,17 @@ public class Graph {
 		return toBeReturned;		
 	}
 	
-	private boolean canBypass(Node son, Vector<String> garbageNodes){
+	private boolean canBypass(){
 		
-		Node test = son;
-		
-		if(garbageNodes.size()<=2 && test.getParent()!=null){
+		for(int i = 0; i < closeQueue.size(); i++){
 			
-			while(true){
-				
-				if(test.getParent()==null)
-					break;
-				if(garbageNodes.contains(test.getParent())){
-					return false;
-				}
-				
-				test=test.getParent();
-			}
+			Node node = closeQueue.get(i);
+			if(node.getValor() > Utils.MIN_VALUE_GARBAGE)
+				return false;
 			
-			return true;
 		}
-		return false;
+		
+		return true;
 	}
 
 	public void printResults(){

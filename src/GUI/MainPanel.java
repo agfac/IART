@@ -57,7 +57,7 @@ public class MainPanel extends JPanel {
 
 	private float truckX = 0;
 	private float truckY = 0;
-	private int truckSpeed = 100;
+	private int truckSpeed = 50;
 	private double garbage = 0;
 
 	RecolhadeResiduos recolha;
@@ -243,6 +243,9 @@ public class MainPanel extends JPanel {
 		public void actionPerformed(ActionEvent event) {
 
 			Edge e = path.peek();
+			
+			System.out.println("PATH: "+e.getDestino().getId());
+			System.out.println("x: "+truckX);
 
 			if(e == null)
 				return;
@@ -268,6 +271,12 @@ public class MainPanel extends JPanel {
 					truckX = path.peek().getDestino().getPosX();
 					path.remove();
 					garbUpdate(e.getDestino());
+					if(e.getDestino().getId().equals("Estacao")){
+						truckY=0;
+						truckX=0;
+						garbage=0;
+						nrViagem++;
+					}
 				}
 			}
 			else if (deltax == 0) {
@@ -279,6 +288,12 @@ public class MainPanel extends JPanel {
 					truckY = path.peek().getDestino().getPosY();					
 					path.remove();
 					garbUpdate(e.getDestino());
+					if(e.getDestino().getId().equals("Estacao")){
+						truckY=0;
+						truckX=0;
+						garbage=0;
+						nrViagem++;
+					}
 				}
 			}else{
 				float inc = (float) (deltax < 0 ? 0.1 : -0.1);
@@ -330,7 +345,9 @@ public class MainPanel extends JPanel {
 
 				if(node.getId().equals(nodeId) && node.isIsGarbage()){
 
-					node.setIsGarbage(Boolean.getBoolean(lixo));
+					System.out.println("INFOYOOLO: " + Boolean.valueOf(lixo));
+					
+					node.setIsGarbage(Boolean.valueOf(lixo));
 
 					System.out.println("GARBAGE: " + garbage);
 

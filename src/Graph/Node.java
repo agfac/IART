@@ -194,7 +194,7 @@ public class Node {
 		
 		this.distance = distanceToParent(this.parent)+parent.distance;
 		
-		this.gValue = Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
+		this.gValue = Utils.DISTANCE_WEIGHT*distance + Utils.GARBAGE_WEIGHT*availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance;
 	}
 	
 	public void updateFValue(){
@@ -221,7 +221,7 @@ public class Node {
 		
 		int distance = distanceToParent(parent) + parent.distance;
 		
-		gValue = Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*parent.availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance*distance;
+		gValue = Utils.DISTANCE_WEIGHT*distance + Utils.GARBAGE_WEIGHT*parent.availableCapacity/(double)Utils.MAX_TRUCK_VALUE*distance;
 		
 		return gValue;
 	}
@@ -232,7 +232,7 @@ public class Node {
 		
 		int distance = distanceToParent(parent) + parent.distance;
 		
-		gValue = (Utils.DISTANCE_WEIGHT*distance*distance + Utils.GARBAGE_WEIGHT*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance*distance);
+		gValue = (Utils.DISTANCE_WEIGHT*distance + Utils.GARBAGE_WEIGHT*(parent.availableCapacity-this.valor)/(double)Utils.MAX_TRUCK_VALUE*distance);
 		
 		return gValue;
 	}

@@ -7,7 +7,7 @@ Aresta - 4 - 7 - 17
 Aresta - 4 - 5 - 10
 Aresta - 5 - 7 - 17
 Aresta - 5 - 8 - 20
-Aresta - 6 - 7 - 15
+Aresta - 7 - 6 - 15
 Aresta - 6 - 9 - 8
 Aresta - 7 - 10 - 8
 Aresta - 7 - 11 - 12

@@ -154,7 +154,7 @@ public class RecolhadeResiduos {
 		
 		for(int i=nodes.size()-1;i>=0;i--){
 			
-			if(capacity>0 && nodes.get(i).isIsGarbage()){
+			if(capacity>0 && nodes.get(i).getValor()>Utils.MIN_VALUE_GARBAGE){
 			
 				int num=nodes.get(i).getValor();
 				
@@ -166,6 +166,9 @@ public class RecolhadeResiduos {
 				
 				}else{
 				
+					System.out.println("capacity "+capacity + " valoryolo" + nodes.get(i).getValor());
+					System.out.println("no " + nodes.get(i).getId() + " valor " + (nodes.get(i).getValor()-capacity));
+					
 					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
 					
 					num=capacity;
@@ -174,8 +177,8 @@ public class RecolhadeResiduos {
 				}
 
 				if(!son.getId().equals("Estacao")){
-					
-					if(nodes.get(i).getValor()>Utils.MAX_TRUCK_VALUE )
+					System.out.println("fodassse " + nodes.get(i).getId()+"-"+num+" " + nodes.get(i).getValor());
+					if(nodes.get(i).getValor()>Utils.MIN_VALUE_GARBAGE )
 						nosDaViagem.add(nodes.get(i).getId()+"-"+num+"-true");
 					else 
 						nosDaViagem.add(nodes.get(i).getId()+"-"+num+"-false");
