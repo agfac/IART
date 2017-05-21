@@ -74,8 +74,6 @@ public class MainPanel extends JPanel {
 
 		recolha = new RecolhadeResiduos(j);
 		
-		System.out.println(recolha.getGraph().getNodes().size());
-		
 		graph = recolha.getGraph();
 		
 		infoDaViagem = recolha.getInfoDaViagem();
@@ -189,7 +187,6 @@ public class MainPanel extends JPanel {
 
 		HashMap<String,Node> copy = new HashMap<String,Node>(this.graph.getNodes());
 		
-		System.out.println(graph.getNodes().size());
 		
 		Iterator<Entry<String, Node>> it = copy.entrySet().iterator();
 
@@ -247,9 +244,6 @@ public class MainPanel extends JPanel {
 		public void actionPerformed(ActionEvent event) {
 
 			Edge e = path.peek();
-			
-			System.out.println("PATH: "+e.getDestino().getId());
-			System.out.println("x: "+truckX);
 
 			if(e == null)
 				return;
@@ -343,17 +337,10 @@ public class MainPanel extends JPanel {
 
 				String lixo = tokens[2];
 
-				System.out.println("INFO: " + allInfo);
-
-				//System.out.println(nodeId + "-" + value);
 
 				if(node.getId().equals(nodeId) && node.isIsGarbage()){
-
-					System.out.println("INFOYOOLO: " + Boolean.valueOf(lixo));
 					
 					node.setIsGarbage(Boolean.valueOf(lixo));
-
-					System.out.println("GARBAGE: " + garbage);
 
 					garbage+=Integer.parseInt(value);	
 

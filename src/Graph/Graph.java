@@ -278,8 +278,6 @@ public class Graph {
 		closeQueue = new ArrayList<Node>();
 		
 		openQueue.add(nodes.get("Central"));
-		System.out.println("começouuuuuuuuuuuuuuuuuuuuuuuuuuu");
-		System.out.println("tamanho do lixo " + garbageNodes.size());
 		
 		boolean stop = true;
 		
@@ -300,7 +298,6 @@ public class Graph {
 				for(int j=0;j<astar.size();j++){
 				
 					if(!openQueue.contains(astar.get(j)) ){
-						System.out.println("vou addicionar o no " + astar.get(j).getId());
 						openQueue.add(astar.get(j));
 					}
 				}	
@@ -309,7 +306,6 @@ public class Graph {
 				
 					stop=false;
 					
-					System.out.println("encontre");
 				}
 			}
 			closeQueue.add(node);
@@ -323,16 +319,11 @@ public class Graph {
 		if(!son.getId().equals("Estacao")){
 			
 			if((garbageNodes.contains(son.getId()) && son.calculateTempGValue(parent)<son.getgValue() && parent.getAvailableCapacity()>0) || (canBypass() && (garbageNodes.contains(son.getId())||(parent.getAvailableCapacity()<Utils.MAX_TRUCK_VALUE)))){
-				//System.out.println("entrou aqui " + son.getId() + " " + son.getValor());
-				if(parent.getAvailableCapacity()>=son.getValor())
-					
+				if(parent.getAvailableCapacity()>=son.getValor())	
 					son.setAvailableCapacity(parent.getAvailableCapacity()-son.getValor());
 				else 
 					son.setAvailableCapacity(0);
 				
-				if(son.getParent()!=null){
-					//System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
-				}
 				
 				son.setParent(parent);
 				
@@ -343,11 +334,7 @@ public class Graph {
 				toBeReturned.add(son);
 				
 			}else if(son.calculateTempGValueWithoutPassing(parent)<son.getgValue() ){
-				
-				if(son.getParent()!=null){
-					//System.out.println("tou a substituir " + son.getId() + " o pai " + parent.getId());
-				}
-				
+							
 				son.setAvailableCapacity(parent.getAvailableCapacity());
 				
 				son.setParent(parent);
@@ -401,11 +388,9 @@ public class Graph {
 		
 		while(true){
 			
-			if(node.getParent()!=null){
-				System.out.println("vou do " + node.getParent().getId() + " para o " + node.getId() + " gvalue= " + node.getgValue());
-			}
-			else 
+			if(node.getParent()==null){
 				break;
+			}
 			
 			node = node.getParent();
 		}
