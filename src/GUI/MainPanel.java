@@ -57,7 +57,7 @@ public class MainPanel extends JPanel {
 
 	private float truckX = 0;
 	private float truckY = 0;
-	private int truckSpeed = 50;
+	private int truckSpeed = 100;
 	private double garbage = 0;
 
 	RecolhadeResiduos recolha;
