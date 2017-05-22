@@ -165,10 +165,7 @@ public class RecolhadeResiduos {
 					nodes.get(i).setValor(0);
 				
 				}else{
-				
-					System.out.println("capacity "+capacity + " valoryolo" + nodes.get(i).getValor());
-					System.out.println("no " + nodes.get(i).getId() + " valor " + (nodes.get(i).getValor()-capacity));
-					
+									
 					nodes.get(i).setValor(nodes.get(i).getValor()-capacity);
 					
 					num=capacity;
@@ -177,7 +174,6 @@ public class RecolhadeResiduos {
 				}
 
 				if(!son.getId().equals("Estacao")){
-					System.out.println("fodassse " + nodes.get(i).getId()+"-"+num+" " + nodes.get(i).getValor());
 					if(nodes.get(i).getValor()>Utils.MIN_VALUE_GARBAGE )
 						nosDaViagem.add(nodes.get(i).getId()+"-"+num+"-true");
 					else 
